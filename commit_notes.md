@@ -38,3 +38,13 @@ Tests:       1 passed, 1 total
 Snapshots:   0 total
 Time:        0.481 s
 Ran all test suites.
+
+## After `e4674f3 npm i --save-dev jest-environment-jsdom``
+
+What is a test environment?
+
+A test environment is a piece of code that runs before and after your test suite to perform setup and teardown. For the jsdom test environment, it instantiates a new JSDOM object and sets global and document objects, turning Node.js into a browser-like environment.
+
+jsdom is a package that contains a headless implementation of the Document Object Model (DOM) that runs on Node.js. In effect, it turns Node.js into a browser-like environment that responds to the usual DOM APIs, such as the document API we're trying to access in this test.
+
+Jest provides a pre-packaged jsdom test environment that will ensure our tests run with these DOM APIs ready to go. We just need to install it and instruct Jest to use it.

@@ -12,7 +12,8 @@ In addition, you should choose a good editor or Integrated Development Environme
 
 The code files for this chapter can be found at the following link: [https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter01](https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter01).
 
-Creating a new React project from scratch
+## Creating a new React project from scratch
+
 In this section, we’ll assemble all of the necessary pieces that you’ll need to write a React application with TDD.
 
 You may have come across the create-react-app package, which many people use to create an initial React project, but we won’t be using that. The very first TDD principle you’re going to learn is You Ain’t Gonna Need It (YAGNI). The create-react-app package adds a whole bunch of boilerplate that isn’t relevant to what we’re doing here—things such as a favicon.ico file, a sample logo, and CSS files. While these are undoubtedly useful, the basic idea behind YAGNI is that if it doesn’t meet a needed specification, then it doesn’t go in.
@@ -27,19 +28,18 @@ Installing npm
 Following the TDD process means running tests frequently—very frequently. Tests are run on the command line using the npm test command. So, let’s start by getting npm installed.
 
 You can find out if you already have it installed on your machine by opening a terminal window (or Command Prompt if you’re on Windows) and typing the following command:
-
+```
 npm -v
+```
 
-If the command isn’t found, head on over to the Node.js website at https://nodejs.org for installation instructions.
+If the command isn’t found, head on over to the Node.js website at [https://nodejs.org](https://nodejs.org) for installation instructions.
 
 If you’ve already got npm installed, we recommend you ensure you’re on the latest version. You can do this on the command line by typing the following command:
-
+```
 npm install npm@latest -g
+```
 
-Now you’re all set. You can use the npm command to create your project.
-
-
-
+Now you’re all set. You can use the **npm** command to create your project.
 
 ## Build `package.json`:
 ```

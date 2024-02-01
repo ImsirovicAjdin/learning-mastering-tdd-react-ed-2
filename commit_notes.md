@@ -21,3 +21,20 @@ Tests:       0 total
 Snapshots:   0 total
 Time:        0.601 s
 Ran all test suites.
+
+## Running `npm test` after commit `0c47312 Green (previous was red)`
+
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.481 s
+Ran all test suites.

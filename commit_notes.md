@@ -626,4 +626,77 @@ Usually, some code remains the same (such as container and the steps needed to r
 
 This section has covered a couple of simple ways of refactoring your code. As the book progresses, we’ll look at many different ways that both production source code and test code can be refactored.
 
+## Writing great tests
+
+Now that you’ve written a couple of tests, let’s step away from the keyboard and discuss what you’ve seen so far.
+
+Your first test looks like the following example:
+
+
+it("renders the customer first name", () => {
+  const customer = { firstName: "Ashley" };
+  render(<Appointment customer={customer} />);
+  expect(document.body.textContent).toContain("Ashley");
+});
+This is concise and clearly readable.
+
+A good test has the following three distinct sections:
+
+Arrange: Sets up test dependencies
+Act: Executes production code under test
+Assert: Checks that expectations are met
+This is so well understood that it is called the Arrange, Act, Assert (AAA) pattern, and all of the tests in this book follow this pattern.
+
+A great test is not just good but is also the following:
+
+Short
+Descriptive
+Independent of other tests
+Has no side effects
+In the remainder of this section, we’ll discuss the TDD cycle, which you’ve already used, and also how to set up your development environment for easy TDD.
+
+## Red, green, refactor
+
+TDD, at its heart, is the red, green, refactor cycle that we’ve just seen.
+
+Figure 1.1 – The TDD cycle
+Figure 1.1 – The TDD cycle
+
+The steps of the TDD cycle are:
+
+Write a failing test: Write a short test that describes some functionality you want. Execute your test and watch it fail. If it doesn’t fail, then it’s an unnecessary test; delete it and write another.
+Make it pass: Make the test green by writing the simplest production code that will work. Don’t worry about finding a neat code structure; you can tidy it up later.
+Refactor your code: Stop, slow down, and resist the urge to move on to the next feature. Work hard to make your code—both production and test code—as clean as it can be.
+That’s all there is to it. You’ve already seen this cycle in action in the preceding two sections, and we’ll continue to use it throughout the rest of the book.
+
+```
+npm test -- --watch
+
+npm test <path-to-test-file>
+
+npm test <path-to-test-file> -- --watch
+```
+
+## Summary
+
+Tests act like a safety harness in our learning; we can build little blocks of understanding, building on top of each other, up and up to ever-greater heights, without fear of falling.
+
+In this chapter, you’ve learned a lot about the TDD experience.
+
+To begin with, you set up a React project from scratch, pulling in only the dependencies you need to get things running. You’ve written two tests using Jest’s describe, it, and beforeEach functions. You discovered the act helper, which ensures all React rendering has been completed before your test expectations execute.
+
+You’ve also seen plenty of testing ideas. Most importantly, you’ve practiced TDD’s red-green-refactor cycle. You’ve also used triangulation and you learned about the Arrange, Act, Assert pattern.
+
+And we threw in a couple of design principles for good measure: DRY and YAGNI.
+
+While this is a great start, the journey has only just begun. In the following chapter, we’ll test drive a more complex component.
+
+Further reading
+Take a look at the Babel web page to discover how to correctly configure the Babel env preset. This is important for real-world applications, but we skipped over it in this chapter. You can find it at the following link:
+
+https://babeljs.io/docs/en/babel-preset-env.
+
+React’s act function was introduced in React 17 and has seen updates in React 18. It is deceptively complex. See this blog post for some more discussion on how this function is used at the following link: https://reacttdd.com/understanding-act.
+
+This book doesn’t make much use of Jest’s watch functionality. In recent versions of Jest, this has seen some interesting updates, such as the ability to choose which files to watch. If you find rerunning tests a struggle, you might want to try it out. You can find more information at the following link: https://jestjs.io/docs/en/cli#watch.
 

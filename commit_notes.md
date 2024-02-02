@@ -1487,3 +1487,67 @@ Time:        0.938 s, estimated 1 s
 Ran all test suites.
 ```
 
+## When the component first loads, we should show the first appointment of the day. A straightforward way to check that happens is to look for the customer's first name is shown on the page. Add the next test which does just that, shown below:
+it("selects the first appointment by default", () => {
+
+  render(
+
+    <AppointmentsDayView
+
+      appointments={twoAppointments}
+
+    />
+
+  );
+
+  expect(document.body.textContent).toContain(
+
+    "Ashley"
+
+  );
+
+});
+
+
+My `npm test` results:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (10 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (6 ms)
+    ✓ renders the time of each appointment (4 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✕ selects the first appointment by default (3 ms)
+
+  ● AppointmentsDayView › selects the first appointment by default
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Ashley"
+    Received string:    "12:0013:00There are no appointments scheduled for today."
+
+       96 |             />
+       97 |         );
+    >  98 |         expect(document.body.textContent).toContain(
+          |                                           ^
+       99 |             "Ashley"
+      100 |         );
+      101 |     });
+
+      at Object.toContain (test/Appointment.test.js:98:43)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 7 passed, 8 total
+Snapshots:   0 total
+Time:        1.311 s
+Ran all test suites.
+```

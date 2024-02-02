@@ -18,23 +18,21 @@ export const Appointment = ({ customer }) => {
 
 export const AppointmentsDayView = ({ appointments }) => {
     return (
-        // to insert div#appointmentsDayView
+        <div id="appointmentsDayView">
+            <ol>
+                {appointments.map(appointment => (
+                    <li key={appointment.startsAt}>
+                        <button type="button">
+                            {appointmentTimeOfDay(appointment.startsAt)}
+                        </button>
+                    </li>
+                ))}
+            </ol>
+            {appointments.length === 0 ? (
+                <p>There are no appointments scheduled for today.</p>
+            ) : (
+                <Appointment {...appointments[0]} />
+            )}
+        </div>
     )
-}
-    <div id="appointmentsDayView">
-        <ol>
-            {appointments.map(appointment => (
-                <li key={appointment.startsAt}>
-                    <button type="button">
-                        {appointmentTimeOfDay(appointment.startsAt)}
-                    </button>
-                </li>
-            ))}
-        </ol>
-        {appointments.length === 0 ? (
-            <p>There are no appointments scheduled for today.</p>
-        ) : (
-            <Appointment {...appointments[0]} />
-        )}
-    </div>
-);
+};

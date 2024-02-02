@@ -245,3 +245,57 @@ Ran all test suites.
 ```
 git add --all; git commit -m "Red: Write a failing test"
 ```
+
+## After `34a3be0`:
+
+I've updated the Appointment.test.js and Appointment.js in order to make the test pass, but it's still not passing.
+
+""This is a bit of a headscratcher."":
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+  console.error
+    Warning: React.createElement: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+       5 | it("renders the customer first name", () => {
+       6 |     const customer = { firstName: "Ashley" };
+    >  7 |     const component = <Appointment customer={customer} />;
+         |                       ^
+       8 |     const container = document.createElement("div");
+       9 |     document.body.appendChild(container);
+      10 |     ReactDOM.createRoot(container).render(component);
+
+      at printWarning (node_modules/react/cjs/react.development.js:209:30)
+      at error (node_modules/react/cjs/react.development.js:183:7)
+      at Object.createElementWithValidation [as createElement] (node_modules/react/cjs/react.development.js:2354:7)
+      at Object.createElement (test/Appointment.test.js:7:23)
+
+ FAIL  test/Appointment.test.js
+  ✕ renders the customer first name (27 ms)
+
+  ● renders the customer first name
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Ashley"
+    Received string:    ""
+
+       9 |     document.body.appendChild(container);
+      10 |     ReactDOM.createRoot(container).render(component);
+    > 11 |     expect(document.body.textContent).toContain("Ashley");
+         |                                       ^
+      12 |     expect(document.body.innerHTML).toContain(
+      13 |         "Ashley"
+      14 |     );
+
+      at Object.toContain (test/Appointment.test.js:11:39)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 total
+Snapshots:   0 total
+Time:        0.78 s, estimated 1 s
+Ran all test suites.
+```

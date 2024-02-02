@@ -1,12 +1,14 @@
 // Commit message: Green: Implement Appointment component
 import React from "react";
 
-function Appointment({ customer }) {
+export const Appointment = ({ customer }) => {
     return (
         <div>
             {customer.firstName}
         </div>
     );
-}
+};
 
-export default Appointment;
+export const AppointmentsDayView = () => (
+    <div id="appointmentsDayView"></div>
+);

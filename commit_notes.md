@@ -779,3 +779,76 @@ describe("AppointmentsDayView", () => {
 
 });
 
+### NOTE
+
+It isn’t usually necessary to wrap your component in a `div` with an ID or a class. We tend to do it when we have CSS that we want to attach to the entire group of HTML elements that will be rendered by the component, which, as you’ll see later, is the case for `AppointmentsDayView`.
+
+This test uses the exact same `render` function from the first `describe` block as well as the same `let container` declaration and `beforeEach` block. In other words, we’ve introduced duplicated code. By duplicating code from our first test suite, we’re making a mess straight after cleaning up our code! Well, we’re allowed to do it when we’re in the first stage of the TDD cycle. Once we’ve got the test passing, we can think about the right structure for the code.
+
+Run `npm test` and look at the output:
+FAIL test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (18ms)
+
+    ✓ renders another customer first name (2ms)
+
+  AppointmentsDayView
+
+    ✕ renders a div with the right id (7ms)
+
+  ● AppointmentsDayView › renders a div with the right id
+
+    ReferenceError: AppointmentsDayView is not defined
+
+Let’s work on getting this test to pass by performing the following steps:
+
+To fix this, change the last `import` statement in your test file to read as follows:
+import {
+
+  Appointment,
+
+  AppointmentsDayView,
+
+} from "../src/Appointment";
+
+In `src/Appointment.js`, add this functional component below Appointment as shown:
+```
+export const AppointmentsDayView = () => {};
+```
+
+Run your tests again. You'll see output like this:
+● AppointmentsDayView › renders a div with the right id
+
+expect(received).not.toBeNull()
+
+Finally, a test failure! Let’s get that div in place as follows:
+export const AppointmentsDayView = () => (
+
+  <div id="appointmentsDayView"></div>
+
+);
+
+""Your test should now be passing.""
+
+Indeed, here's my result of `npm test`:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        0.757 s, estimated 1 s
+Ran all test suites.
+```

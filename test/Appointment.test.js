@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { act } from "react-dom/test-utils";
-import Appointment from "../src/Appointment";
+import {
+    Appointment,
+    AppointmentsDayView,
+} from "../src/Appointment";
 
 describe("Appointment", () => {
 
@@ -40,11 +43,11 @@ describe("AppointmentsDayView", () => {
         act(() => ReactDOM.createRoot(container).render(component)
     );
     it("renders a div with the right id", () => {
-        render(<AppintmentsDayView appointments={[]} />);
+        render(<AppointmentsDayView appointments={[]} />);
         expect(
             document.querySelector(
                 "div#appointmentsDayView"
             )
         ).not.toBeNull();
-    })
+    });
 })

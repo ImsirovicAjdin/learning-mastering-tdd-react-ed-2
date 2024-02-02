@@ -16,7 +16,11 @@ export const Appointment = ({ customer }) => {
     );
 };
 
-export const AppointmentsDayView = ({ appointments }) => (
+export const AppointmentsDayView = ({ appointments }) => {
+    return (
+        // to insert div#appointmentsDayView
+    )
+}
     <div id="appointmentsDayView">
         <ol>
             {appointments.map(appointment => (

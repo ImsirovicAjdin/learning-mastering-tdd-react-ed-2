@@ -700,3 +700,82 @@ React’s act function was introduced in React 17 and has seen updates in React 
 
 This book doesn’t make much use of Jest’s watch functionality. In recent versions of Jest, this has seen some interesting updates, such as the ability to choose which files to watch. If you find rerunning tests a struggle, you might want to try it out. You can find more information at the following link: https://jestjs.io/docs/en/cli#watch.
 
+## Rendering Lists and Detail Views
+The previous chapter introduced the core TDD cycle: red, green, refactor. You had the chance to try it out with two simple tests. Now, it’s time to apply that to a bigger React component.
+
+At the moment, your application displays just a single item of data: the customer’s name. In this chapter, you’ll extend it so that you have a view of all appointments for the current day. You’ll be able to choose a time slot and see the details for the appointment at that time. We will start this chapter by sketching a mock-up to help us plan how we’ll build out the component. Then, we’ll begin implementing a list view and showing appointment details.
+
+Once we’ve got the component in good shape, we’ll build the entry point with webpack and then run the application in order to do some manual testing.
+
+The following topics will be covered in this chapter:
+
+Sketching a mock-up
+Creating the new component
+Specifying list item content
+Selecting data to view
+Manually testing our changes
+By the end of this chapter, you’ll have written a decent-sized React component using the TDD process you’ve already learned. You’ll also have seen the app running for the first time.
+
+Technical requirements
+The code files for this chapter can be found at https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter02.
+
+Sketching a mock-up
+Let’s start with a little more up-front design. We’ve got an Appointment component that takes an appointment and displays it. We will build an AppointmentsDayView component around it that takes an array of appointment objects and displays them as a list. It will also display a single Appointment: the appointment that is currently selected. To select an appointment, the user simply clicks on the time of day that they’re interested in.
+
+Figure 2.1 – A mock-up of our appointment system UI
+Figure 2.1 – A mock-up of our appointment system UI
+
+UP-FRONT DESIGN
+
+When you’re using TDD to build new features, it’s important to do a little up-front design so that you have a general idea of the direction your implementation needs to take.
+
+That’s all the design we need for now; let’s jump right in and build the new AppointmentsDayView component.
+
+Creating the new component
+In this section, we’ll create the basic form of AppointmentsDayView: a list of appointment times for the day. We won’t build any interactive behavior for it just yet.
+
+We’ll add our new component into the same file we’ve been using already because so far there’s not much code in there. Perform the following steps:
+
+PLACING COMPONENTS
+
+We don’t always need a new file for each component, particularly when the components are short functional components, such as our Appointment component (a one-line function). It can help to group related components or small sub-trees of components in one place.
+
+In test/Appointment.test.js, create a new describe block under the first one, with a single test. This test checks that we render a div with a particular ID. That’s important in this case because we load a CSS file that looks for this element. The expectations in this test use the DOM method, querySelector. This searches the DOM tree for a single element with the tag provided:
+describe("AppointmentsDayView", () => {
+
+  let container;
+
+  beforeEach(() => {
+
+    container = document.createElement("div");
+
+    document.body.replaceChildren(container);
+
+  });
+
+  const render = (component) =>
+
+    act(() =>
+
+      ReactDOM.createRoot(container).render(component)
+
+    );
+
+  it("renders a div with the right id", () => {
+
+    render(<AppointmentsDayView appointments={[]} />);
+
+    expect(
+
+      document.querySelector(
+
+        "div#appointmentsDayView"
+
+      )
+
+    ).not.toBeNull();
+
+  });
+
+});
+

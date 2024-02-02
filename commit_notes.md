@@ -1701,3 +1701,32 @@ Snapshots:   0 total
 Time:        0.98 s, estimated 1 s
 Ran all test suites.
 ```
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (10 ms)
+    ✓ renders an ol element to display appointments (5 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (4 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (2 ms)
+    ✓ has a button element in each li (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        0.934 s, estimated 1 s
+Ran all test suites.
+```
+
+

@@ -1551,3 +1551,69 @@ Snapshots:   0 total
 Time:        1.311 s
 Ran all test suites.
 ```
+
+## Since we’re looking for the customer’s name, we’ll need to make sure that’s available in the `twoAppointments` array. Update it now to include the customer’s first name as follows:
+const twoAppointments = [
+
+  {
+
+    startsAt: today.setHours(12, 0),
+
+    customer: { firstName: "Ashley" },
+
+  },
+
+  {
+
+    startsAt: today.setHours(13, 0),
+
+    customer: { firstName: "Jordan" },
+
+  },
+
+];
+
+Make the test pass by modifying the `Appointment` component. Change the last line of the `div` component to read as follows:
+<div id="appointmentsDayView">
+
+  ...
+
+  {appointments.length === 0 ? (
+
+    <p>There are no appointments scheduled for today.</p>
+
+  ) : (
+
+    <Appointment {...appointments[0]} />
+
+  )}
+
+</div>
+
+Now we’re ready to let the user make a selection.
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (16 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (10 ms)
+    ✓ renders an ol element to display appointments (6 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (4 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (2 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
+Time:        1.02 s
+Ran all test suites.
+```

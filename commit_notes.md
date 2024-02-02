@@ -1032,3 +1032,85 @@ Snapshots:   0 total
 Time:        0.913 s, estimated 1 s
 Ran all test suites.
 ```
+
+## To fix this...
+
+...we map over the provided appointments prop and render an empty li element:
+export const AppointmentsDayView = (
+
+  { appointments }
+
+) => (
+
+  <div id="appointmentsDayView">
+
+    <ol>
+
+      {appointments.map(() => (
+
+        <li />
+
+      ))}
+
+    </ol>
+
+  </div>
+
+);
+
+My result of `npm test`:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+  console.error
+    Warning: Each child in a list should have a unique "key" prop.
+
+    Check the render method of `AppointmentsDayView`. See https://reactjs.org/link/warning-keys for more information.
+        at li
+        at appointments (/home/pc/Desktop/temp-tdd-whatever/mastering-react-tdd/my-mastering-tdd/src/Appointment.js:12:39)
+
+      12 | export const AppointmentsDayView = ({ appointments }) => (
+      13 |     <div id="appointmentsDayView">
+    > 14 |         <ol>
+         |         ^
+      15 |             {appointments.map(() => (
+      16 |                 <li />
+      17 |             ))}
+
+      at printWarning (node_modules/react/cjs/react.development.js:209:30)
+      at error (node_modules/react/cjs/react.development.js:183:7)
+      at validateExplicitKey (node_modules/react/cjs/react.development.js:2191:5)
+      at validateChildKeys (node_modules/react/cjs/react.development.js:2217:9)
+      at Object.createElementWithValidation [as createElement] (node_modules/react/cjs/react.development.js:2372:7)
+      at createElement (src/Appointment.js:14:9)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:16305:18)
+      at mountIndeterminateComponent (node_modules/react-dom/cjs/react-dom.development.js:20074:13)
+      at beginWork (node_modules/react-dom/cjs/react-dom.development.js:21587:16)
+      at beginWork$1 (node_modules/react-dom/cjs/react-dom.development.js:27426:14)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26560:12)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26466:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26434:7)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25738:74)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at render (test/Appointment.test.js:43:12)
+      at Object.render (test/Appointment.test.js:64:9)
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (44 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        0.943 s, estimated 1 s
+Ran all test suites.
+```

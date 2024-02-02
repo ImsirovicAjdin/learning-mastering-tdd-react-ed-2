@@ -4,11 +4,17 @@ import { act } from "react-dom/test-utils";
 import Appointment from "../src/Appointment";
 
 describe("Appointment", () => {
+
+    let container;
+
+    beforeEach(() => {
+        container = document.createElement("div");
+        document.body.replaceChildren(container);
+    });
+
     it("renders the customer first name", () => {
         const customer = { firstName: "Ashley" };
         const component = <Appointment customer={customer} />;
-        const container = document.createElement("div");
-        document.body.replaceChildren(container);
         act(() =>
             ReactDOM.createRoot(container).render(component)
         )
@@ -18,8 +24,6 @@ describe("Appointment", () => {
     it("renders another customer first name", () => {
         const customer = { firstName: "Jordan" };
         const component = <Appointment customer={customer} />;
-        const container = document.createElement("div");
-        document.body.replaceChildren(container);
         act(() =>
             ReactDOM.createRoot(container).render(component)
         )

@@ -546,3 +546,37 @@ The key point is that you want your tests to be as concise as possible. When you
 
 You will see further techniques for drying up tests in Chapter 3, Refactoring the Test Suite.
 
+## Sharing setup code between tests
+
+When tests contain identical setup instructions, we can promote those instructions into a shared `beforeEach` block. The code in this block is executed before each test.
+
+Both of our tests use the same two variables: `container` and `customer`. The first one of these, `container`, is initialized identically in each test. That makes it a good candidate for a `beforeEach` block.
+
+Perform the following steps to introduce your first `beforeEach` block:
+
+Since `container` needs to be accessed in the `beforeEach` block and each of the tests, we must declare it in the outer `describe` scope. And since we’ll be setting its value in the before`Each block, that also means we’ll need to use `let` instead of `const`. Just above the first test, add the following line of code:
+
+let container;
+
+Below that declaration, add the following code:
+
+beforeEach(() => {
+
+  container = document.createElement("div");
+
+  document.body.replaceChildren(container);
+
+});
+
+Delete the corresponding two lines from each of your two tests. Note that since we defined `container` in the scope of the `describe` block, the value set in the `beforeEach` block will be available to your test when it executes.
+
+## USE OF LET INSTEAD OF CONST
+
+**BE CAREFUL WHEN YOU USE `let` DEFINITIONS WITHIN THE `describe` SCOPE.**
+
+These variables are not cleared by default between each test execution, and that shared state will affect the outcome of each test. A good rule of thumb is that any variable you declare in the `describe` scope should be assigned to a new value in a corresponding `beforeEach` block, or in the first part of each test, just as we’ve done here.
+
+For a more detailed look at the use of let in test suites, head to https://reacttdd.com/use-of-let.
+
+In Chapter 3, Refactoring the Test Suite, we’ll look at a method for sharing this setup code between multiple test suites.
+

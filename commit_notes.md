@@ -1185,3 +1185,100 @@ Snapshots:   0 total
 Time:        0.878 s, estimated 1 s
 Ran all test suites.
 ```
+
+## Specifying list item content
+In this section, you’ll add a test that uses an array of example appointments to specify that the list items should show the time of each appointment, and then you’ll use that test to support the implementation.
+
+Let’s start with the test:
+
+Create a fourth test in the new `describe` block as shown:
+it("renders the time of each appointment", () => {
+
+  const today = new Date();
+
+  const twoAppointments = [
+
+    { startsAt: today.setHours(12, 0) },
+
+    { startsAt: today.setHours(13, 0) },
+
+  ];
+
+  render(
+
+    <AppointmentsDayView
+
+      appointments={twoAppointments}
+
+    />
+
+  );
+
+  const listChildren =
+
+    document.querySelectorAll("li");
+
+  expect(listChildren[0].textContent).toEqual(
+
+    "12:00"
+
+  );
+
+  expect(listChildren[1].textContent).toEqual(
+
+    "13:00"
+
+  );
+
+});
+
+Jest will show the following error:
+
+● AppointmentsDayView › renders the time of each appointment
+
+expect(received).toEqual(expected) // deep equality
+
+Expected: "12:00"
+
+Received: ""
+
+**My `npm test` result:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (3 ms)
+    ✓ renders an li for each appointment (4 ms)
+    ✕ renders the time of each appointment (6 ms)
+
+  ● AppointmentsDayView › renders the time of each appointment
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: "12:00"
+    Received: ""
+
+      82 |         );
+      83 |         const listChildren = document.querySelectorAll("li");
+    > 84 |         expect(listChildren[0].textContent).toEqual(
+         |                                             ^
+      85 |             "12:00"
+      86 |         );
+      87 |         expect(listChildren[1].textContent).toEqual(
+
+      at Object.toEqual (test/Appointment.test.js:84:45)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 5 passed, 6 total
+Snapshots:   0 total
+Time:        0.947 s, estimated 1 s
+Ran all test suites.
+```

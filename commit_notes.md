@@ -1842,3 +1842,8 @@ export const AppointmentsDayView = (
 
   );
 
+Add the following line of code above the return statement:
+const [selectedAppointment, setSelectedAppointment] =
+
+  useState(0);
+

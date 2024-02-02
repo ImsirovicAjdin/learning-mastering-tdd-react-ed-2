@@ -1114,3 +1114,74 @@ Snapshots:   0 total
 Time:        0.943 s, estimated 1 s
 Ran all test suites.
 ```
+
+## IGNORING UNUSED FUNCTION ARGUMENTS
+
+The `map` function will provide an `appointment` argument to the function passed to it. Since we don’t use the argument (yet), we don’t need to mention it in the function signature—we can just pretend that our function has no arguments instead, hence the empty brackets. Don’t worry, we’ll need the argument for a subsequent test, and we’ll add it in then.
+
+Great, let’s see what Jest thinks. Run `npm test` again:
+  console.error
+
+    Warning: Each child in a list should have a unique "key" prop.
+
+    Check the render method of AppointmentsDayView.
+
+    ...
+
+PASS test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (19ms)
+
+    ✓ renders another customer first name (2ms)
+
+  AppointmentsDayView
+
+    ✓ renders a div with the right id (7ms)
+
+    ✓ renders an ol element to display appointments (16ms)
+
+    ✓ renders an li for each appointment (16ms)
+
+Our test passed, but we got a warning from React. It’s telling us to set a key value on each child element. We can use `startsAt` as a key, like this:
+<ol>
+
+  {appointments.map(appointment => (
+
+    <li key={appointment.startsAt} />
+
+  ))}
+
+</ol>
+
+TESTING KEYS
+
+There’s no easy way for us to test key values in React. To do it, we’d need to rely on internal React properties, which would introduce a risk of tests breaking if the React team were to ever change those properties.
+
+The best we can do is set a key to get rid of this warning message. In an ideal world, we’d have a test that uses the `startsAt` timestamp for each li key. Let’s just imagine that we have that test in place.
+
+This section has covered how to render the basic structure of a list and its list items. Next, it’s time to fill in those items.
+
+My `npm test` result:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (5 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        0.878 s, estimated 1 s
+Ran all test suites.
+```

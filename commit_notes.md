@@ -1374,3 +1374,76 @@ Snapshots:   0 total
 Time:        0.762 s, estimated 1 s
 Ran all test suites
 ```
+
+## Selecting data to view
+
+Let’s add in some dynamic behavior to our page. We’ll make each of the list items a link that the user can click on to view that appointment.
+
+Thinking through our design a little, there are a few pieces we’ll need:
+
+A `button` element within our `li`
+An `onClick` handler that is attached to that `button` element
+Component state to record which appointment is currently being viewed
+
+When we test React actions, we do it by observing the consequences of those actions. In this case, we can click on a button and then check that its corresponding appointment is now rendered on the screen.
+
+We’ll break this section into two parts: first, we’ll specify how the component should initially appear, and second, we’ll handle a click event for changing the content.
+
+Initial selection of data
+
+Let’s start by asserting that each `li` element has a `button` element:
+
+We want to display a message to the user if there are no appointments scheduled for today. In the `AppointmentsDayView` `describe` block, add the following test:
+it("initially shows a message saying there are no appointments today", () => {
+
+  render(<AppointmentsDayView appointments={[]} />);
+
+  expect(document.body.textContent).toContain(
+
+    "There are no appointments scheduled for today."
+
+  );
+
+});
+
+My `npm test` result:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (3 ms)
+    ✕ initially shows a message saying there are no appointments today (3 ms)
+
+  ● AppointmentsDayView › initially shows a message saying there are no appointments today
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "There are no appointments scheduled for today."
+    Received string:    ""
+
+      86 |     it("initially shows a message saying there are no appointments today", () => {
+      87 |         render(<AppointmentsDayView appointments={[]} />);
+    > 88 |         expect(document.body.textContent).toContain(
+         |                                           ^
+      89 |             "There are no appointments scheduled for today."
+      90 |         );
+      91 |     });
+
+      at Object.toContain (test/Appointment.test.js:88:43)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 6 passed, 7 total
+Snapshots:   0 total
+Time:        0.909 s, estimated 1 s
+Ran all test suites.
+```

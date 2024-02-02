@@ -22,6 +22,9 @@
     "react-dom": "^18.2.0"
   },
   "jest": {
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "globals": {
+      "IS_REACT_ACT_ENVIRONMENT": true
+    }
   }
 }

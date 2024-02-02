@@ -299,3 +299,61 @@ Snapshots:   0 total
 Time:        0.78 s, estimated 1 s
 Ran all test suites.
 ```
+
+## The above does not pass
+
+This is a bit of a headscratcher. We *did* define a valid React component. And we did tell React to render it in our container. What's going on?
+
+Making use of the act test helper:
+In a React testing situation like this, often the answer has something to do with the async nature of the runtime environment. Starting in React 18, the render function is asynchronous: the function call will return before React has modified the DOM. Therefore, the expectation will run **before** the DOM is modified.
+
+**REACT PROVIDES A HELPER FUNCTION FOR OUR TESTS THAT PAUSES UNTIL ASYNCHRONOUS RENDERING HAS COMPLETED. IT'S CALLED `act()` AND YOU SIMPLY NEED TO WRAP IT AROUND ANY REACT API CALLS. TO USE `act()` PERFORM THE FOLLOWING STEPS:**
+```jsx
+import { act } from "react-dom/test-utils";
+```
+
+```jsx
+act(() =>
+    ReactDOM.createRoot(container).render(component)
+);
+```
+
+Now if you re-run your test, it will be passing but with a weird warning: 
+```
+console.error
+Warning: The current testing environment is not configured to support act(...)
+```
+
+React would like us to be explicit in our use of `act()`. That's because there are use cases where `act()` does not make sense - but for unit testing, we almost certainly want to use it.
+
+UNDERSTANDING THE ACT FUNCTION:
+```package.json
+{
+    ...
+    "jest": {
+        "testEnvironment": "jsdom",
+        "globals": {
+            "IS_REACT_ACT_ENVIRONMENT": true
+        }
+    }
+}
+```
+
+""Now run your test again and it passes.""
+
+After I ran `npm test` I indeed got a successful this:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  ✓ renders the customer first name (13 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.854 s, estimated 1 s
+Ran all test suites.
+```

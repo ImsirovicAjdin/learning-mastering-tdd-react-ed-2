@@ -488,3 +488,61 @@ it("renders the customer first name", () => {
 
 Rerun the tests with npm test. It should still be passing.
 
+## Update the second test as the first, with replaceChildren
+
+Running tests now should give us the error that we were originally expecting. No more repeated text content, as you can see:
+FAIL test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (18ms)
+
+    ✕ renders another customer first name (8ms)
+
+  ● Appointment › renders another customer first name
+
+    expect(received).toContain(expected)
+
+    Expected substring: "Jordan"
+
+    Received string:    "Ashley"
+
+To make the test pass, we need to introduce the prop and use it within our component. Change the definition of Appointment to look as follows, destructuring the function arguments to pull out the customer prop:
+export const Appointment = ({ customer }) => (
+
+  <div>{customer.firstName}</div>
+
+);
+
+Run tests. We expect this test to now pass:
+PASS test/Appointment.test.js
+
+Appointment
+
+✓ renders the customer first name (21ms)
+
+✓ renders another customer first name (2ms)
+
+Great work! We’re done with our passing test, and we’ve successfully triangulated to remove hardcoding.
+
+In this section, you’ve written two tests and, in the process of doing so, you’ve discovered and overcome some of the challenges we face when writing automated tests for React components.
+
+Now that we’ve got our tests working, we can take a closer look at the code we’ve written.
+
+Refactoring your work
+Now that you’ve got a green test, it’s time to refactor your work. Refactoring is the process of adjusting your code’s structure without changing its functionality. It’s crucial for keeping a code base in a fit, maintainable state.
+
+Sadly, the refactoring step is the step that always gets forgotten. The impulse is to rush straight into the next feature. We can’t stress how important it is to take time to simply stop and stare at your code and think about ways to improve it. Practicing your refactoring skills is a sure-fire way to level up as a developer.
+
+The adage “more haste; less speed” applies to coding just as it does in life. If you make a habit of skipping the refactoring phase, your code quality will likely deteriorate over time, making it harder to work with and therefore slower to build new features.
+
+The TDD cycle helps you build good personal discipline and habits, such as consistently refactoring. It might take more effort upfront, but you will reap the rewards of a code base that remains maintainable as it ages.
+
+DON’T REPEAT YOURSELF
+
+Test code needs as much care and attention as production code. The number one principle you’ll be relying on when refactoring your tests is Don’t Repeat Yourself (DRY). Drying up tests is a phrase all TDDers repeat often.
+
+The key point is that you want your tests to be as concise as possible. When you see repeated code that exists in multiple tests, it’s a great indication that you can pull that repeated code out. There are a few different ways to do that, and we’ll cover just a couple in this chapter.
+
+You will see further techniques for drying up tests in Chapter 3, Refactoring the Test Suite.
+

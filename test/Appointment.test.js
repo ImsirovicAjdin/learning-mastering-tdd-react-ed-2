@@ -15,11 +15,11 @@ describe("Appointment", () => {
         expect(document.body.textContent).toContain("Ashley");
     });
 
-    it.skip("renders another customer first name", () => {
+    it("renders another customer first name", () => {
         const customer = { firstName: "Jordan" };
         const component = <Appointment customer={customer} />;
         const container = document.createElement("div");
-        document.body.appendChild(container);
+        document.body.replaceChildren(container);
         act(() =>
             ReactDOM.createRoot(container).render(component)
         )

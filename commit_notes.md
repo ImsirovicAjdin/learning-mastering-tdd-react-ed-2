@@ -910,3 +910,36 @@ Snapshots:   0 total
 Time:        0.922 s, estimated 1 s
 Ran all test suites.
 ```
+
+## To make that pass, add the ol element as follows:
+```jsx
+export const AppointmentsDayView = () => (
+  <div id="appointmentsDayView">
+    <ol />
+  </div>
+);
+```
+
+My results of `npm test`:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (6 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        0.854 s, estimated 1 s
+Ran all test suites.
+```
+
+

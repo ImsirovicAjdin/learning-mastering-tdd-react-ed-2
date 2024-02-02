@@ -1447,3 +1447,43 @@ Snapshots:   0 total
 Time:        0.909 s, estimated 1 s
 Ran all test suites.
 ```
+
+## Make the test pass by adding in a message at the bottom of the rendered output. We don’t need a check for an empty appointments array just yet; we’ll need another test to triangulate to that. The message is as follows:
+
+return (
+
+  <div id="appointmentsDayView">
+
+    ...
+
+    <p>There are no appointments scheduled for today.</p>
+
+  </div>
+
+);
+
+My `npm test` result:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✓ renders an ol element to display appointments (3 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (4 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        0.938 s, estimated 1 s
+Ran all test suites.
+```
+

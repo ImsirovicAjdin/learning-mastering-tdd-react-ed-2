@@ -357,3 +357,134 @@ Snapshots:   0 total
 Time:        0.854 s, estimated 1 s
 Ran all test suites.
 ```
+
+## Triangulating to remove hardcoding
+
+We did the implementations so far because we want to stick to our rule of only doing the simplest thing that will make a test pass.
+
+To get to the real implementation, we need to add more tests, which is a process known as **TRIANGULATION**.
+
+We add more tests to build more of a real impelemtnation. **The more specific our tests get, the more general our production code needs to get**.
+
+Let's triangulate by performing the following steps.
+
+Make a copy of your first test, pasting it just under the first test, and change the test description and the name of Ashley to Jordan, as follows:
+it("renders another customer first name", () => {
+
+  const customer = { firstName: "Jordan" };
+
+  const component = (
+
+    <Appointment customer={customer} />
+
+  );
+
+  const container = document.createElement("div");
+
+  document.body.appendChild(container);
+
+  act(() =>
+
+    ReactDOM.createRoot(container).render(component)
+
+  );
+
+  expect(document.body.textContent).toContain(
+
+    "Jordan"
+
+  );
+
+});
+
+Run tests with npm test. We expect this test to fail, and it does. But examine the code carefully. Is this what you expected to see? Take a look at the value of Received string in the following code:
+FAIL test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (18ms)
+
+    ✕ renders another customer first name (8ms)
+
+  ● Appointment › renders another customer first name
+
+    expect(received).toContain(expected)
+
+    Expected substring: "Jordan"
+
+    Received string:    "AshleyAshley"
+
+The document body has the text `AshleyAshley`. **THIS KIND OF REPEATED TEXT IS AN INDICATOR THAT OUR TESTS ARE NOT INDEPENDENT OF ONE ANOTHER.**
+
+**The component has been rendered twice, once for each test. That’s correct, but the document isn’t being cleared between each test run**.
+
+This is a problem.
+
+**WHEN IT COMES TO UNIT TESTING, WE WANT ALL TESTS TO BE INDEPENDENT OF ONE ANOTHER.**
+
+**THE SIMPLEST WAY TO ACHIEVE THIS IS TO NOT HAVE ANY SHARED STATE BETWEEN TESTS.**
+
+**EACH TEST SHOULD ONLY USE VARIABLES THAT IT HAS CREATED ITSELF.**
+
+acktracking on ourselves
+We know that the shared state is the problem. Shared state is a fancy way of saying “shared variables.” In this case, it’s document. This is the single global document object that is given to us by the jsdom environment, which is consistent with how a normal web browser operates: there’s a single document object. But unfortunately, our two tests use appendChild to add into that single document that’s shared between them. They don’t each get their own separate instance.
+
+A simple solution is to replace appendChild with replaceChildren, like this:
+
+
+document.body.replaceChildren(container);
+This will clear out everything from document.body before doing the append.
+
+But there’s a problem. We’re in the middle of a red test. We should never refactor, rework, or otherwise change course while we’re red.
+
+Admittedly, this is all highly contrived—we could have used replaceChildren right from the start. But not only are we proving the need for replaceChildren, we are also about to discover an important technique for dealing with just this kind of scenario.
+
+What we’ll have to do is skip this test we’re working on, fix the previous test, then re-enable the skipped test. Let’s do that now by performing the following steps:
+
+In the first test you’ve just written, change it to it.skip. Do that now for the second test as follows:
+it.skip("renders another customer first name", () => {
+
+  ...
+
+});
+
+Run tests. You’ll see that Jest ignores the second test and the first one still passes, as follows:
+PASS test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (19ms)
+
+    ○ skipped 1 test
+
+Test Suites: 1 passed, 1 total
+
+Tests: 1 skipped, 1 passed, 2 total
+
+In the first test, change appendChild to replaceChildren as follows:
+it("renders the customer first name", () => {
+
+  const customer = { firstName: "Ashley" };
+
+  const component = (
+
+    <Appointment customer={customer} />
+
+  );
+
+  const container = document.createElement("div");
+
+  document.body.replaceChildren(container);
+
+  ReactDOM.createRoot(container).render(component);
+
+  expect(document.body.textContent).toContain(
+
+    "Ashley"
+
+  );
+
+});
+
+Rerun the tests with npm test. It should still be passing.
+

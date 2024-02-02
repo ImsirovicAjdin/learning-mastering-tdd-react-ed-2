@@ -615,9 +615,14 @@ it("renders the customer first name", () => {
 });
 
 Rerun your tests and verify that they are still passing.
-HIGHLIGHTING DIFFERENCES WITHIN YOUR TESTS
 
-The parts of a test that you want to highlight are the parts that differ between tests. Usually, some code remains the same (such as container and the steps needed to render a component) and some code differs (customer in this example). Do your best to hide away whatever is the same and highlight what differs. That way, it makes it obvious what a test is specifically testing.
+## HIGHLIGHTING DIFFERENCES WITHIN YOUR TESTS
+
+**THE PARTS OF A TEST THAT YOU WANT TO HIGHLIGHT ARE THE PARTS THAT DIFFER BETWEEN TESTS.**
+
+Usually, some code remains the same (such as container and the steps needed to render a component) and some code differs (customer in this example).
+
+**DO YOUR BEST TO HIDE AWAY WHATEVER IS THE SAME AND HIGHLIGHT WHAT DIFFERS. THAT WAY, IT MAKES IT OBVIOUS WHAT AT TEST IS SPECIFICALLY TESTING.**
 
 This section has covered a couple of simple ways of refactoring your code. As the book progresses, we’ll look at many different ways that both production source code and test code can be refactored.
 

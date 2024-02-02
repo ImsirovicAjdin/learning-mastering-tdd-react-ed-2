@@ -1729,4 +1729,75 @@ Time:        0.934 s, estimated 1 s
 Ran all test suites.
 ```
 
+## We can now test what happens when the button is clicked. Back in test/Appointment.test.js, add the following as the next test. This uses the click function on the DOM element to raise a DOM click event:
+it("renders another appointment when selected", () => {
+
+  render(
+
+    <AppointmentsDayView
+
+      appointments={twoAppointments}
+
+    />
+
+  );
+
+  const button =
+
+    document.querySelectorAll("button")[1];
+
+  act(() => button.click());
+
+  expect(document.body.textContent).toContain(
+
+    "Jordan"
+
+  );
+
+});
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (12 ms)
+    ✓ renders an ol element to display appointments (5 ms)
+    ✓ renders an li for each appointment (7 ms)
+    ✓ renders the time of each appointment (6 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (3 ms)
+    ✓ has a button element in each li (4 ms)
+    ✕  (6 ms)
+
+  ● AppointmentsDayView › 
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Jordan"
+    Received string:    "12:0013:00Ashley"
+
+      119 |         const button = document.querySelectorAll("button")[1];
+      120 |         act(() => button.click());
+    > 121 |         expect(document.body.textContent).toContain(
+          |                                           ^
+      122 |             "Jordan"
+      123 |         );
+      124 |     });
+
+      at Object.toContain (test/Appointment.test.js:121:43)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 9 passed, 10 total
+Snapshots:   0 total
+Time:        1.03 s
+Ran all test suites.
+```
 

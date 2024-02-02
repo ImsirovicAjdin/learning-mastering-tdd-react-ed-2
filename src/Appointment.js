@@ -1,5 +1,5 @@
 // Commit message: Green: Implement Appointment component
-import React from "react";
+import React, { useState } from "react";
 
 const appointmentTimeOfDay = (startsAt) => {
     const [h, m] = new Date(startsAt)

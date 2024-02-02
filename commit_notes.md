@@ -1801,3 +1801,44 @@ Time:        1.03 s
 Ran all test suites.
 ```
 
+### SYNTHETIC EVENTS AND SIMULATE
+
+An alternative to using the click function is to use the Simulate namespace from React’s test utilities to raise a synthetic event. While the interface for using Simulate is somewhat simpler than the DOM API for raising events, it’s also unnecessary for testing. There’s no need to use extra APIs when the DOM API will suffice. Perhaps more importantly, we also want our tests to reflect the real browser environment as much as possible.
+
+Go ahead and run the test. The output will look like this:
+  ● AppointmentsDayView › renders appointment when selected
+
+    expect(received).toContain(expected)
+
+    Expected substring: "Jordan"
+
+    Received string:    "12:0013:00Ashley"
+
+Notice the full text in the received string. We’re getting the text content of the list too because we’ve used document.body.textContent in our expectation rather than something more specific.
+
+SPECIFICITY OF EXPECTATIONS
+
+Don’t be too bothered about where the customer’s name appears on the screen. Testing document.body.textContent is like saying “I want this text to appear somewhere, but I don’t care where.” Often, this is enough for a test. Later on, we’ll see techniques for expecting text in specific places.
+
+There’s a lot we now need to get in place in order to make the test pass. We need to introduce state and we need to add the handler. Perform the following steps:
+
+Update the import at the top of the file to pull in the useState function as follows:
+import React, { useState } from "react";
+
+Wrap the constant definition in curly braces, and then return the existing value as follows:
+export const AppointmentsDayView = (
+
+  { appointments }
+
+) => {
+
+  return (
+
+    <div id="appointmentsDayView">
+
+      ...
+
+    </div>
+
+  );
+

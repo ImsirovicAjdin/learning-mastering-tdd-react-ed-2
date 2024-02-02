@@ -1282,3 +1282,63 @@ Snapshots:   0 total
 Time:        0.947 s, estimated 1 s
 Ran all test suites.
 ```
+
+
+
+
+## THE TOEQUAL MATCHER
+
+This matcher is a stricter version of `toContain`. The expectation only passes if the text content is an exact match. In this case, we think it makes sense to use `toEqual`. However, it’s often best to be as loose as possible with your expectations. Tight expectations have a habit of breaking any time you make the slightest change to your code base.
+
+Add the following function to `src/Appointment.js`, which converts a Unix timestamp (which we get from the return value from `setHours`) into a time of day. It doesn’t matter where in the file you put it; we usually like to define constants before we use them, so this would go at the top of the file:
+const appointmentTimeOfDay = (startsAt) => {
+
+  const [h, m] = new Date(startsAt)
+
+    .toTimeString()
+
+    .split(":");
+
+  return `${h}:${m}`;
+
+}
+
+UNDERSTANDING SYNTAX
+
+This function uses *destructuring assignment* and *template literals*, which are language features that you can use to keep your functions concise.
+
+**Having good unit tests can help teach advanced language syntax. If we’re ever unsure about what a function does, we can look up the tests that will help us figure it out.**
+
+Use the preceding function to update `AppointmentsDayView` as follows:
+<ol>
+
+  {appointments.map(appointment => (
+
+    <li key={appointment.startsAt}>
+
+      {appointmentTimeOfDay(appointment.startsAt)}
+
+    </li>
+
+  ))}
+
+</ol>
+
+Running tests should show everything as green:
+PASS test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (19ms)
+
+    ✓ renders another customer first name (2ms)
+
+  AppointmentsDayView
+
+    ✓ renders a div with the right id (7ms)
+
+    ✓ renders an ol element to display appointments (16ms)
+
+    ✓ renders an li for each appointment (6ms)
+
+    ✓ renders the time of each appointment (3ms)

@@ -580,3 +580,45 @@ For a more detailed look at the use of let in test suites, head to https://react
 
 In Chapter 3, Refactoring the Test Suite, we’ll look at a method for sharing this setup code between multiple test suites.
 
+## Extracting methods
+
+The call to `render` is the same in both tests. It’s also quite lengthy given that it’s wrapped in a call to `act`. It makes sense to extract this entire operation and give it a more meaningful name.
+
+Rather than pull it out as is, we can create a new function that takes the `Appointment` component as its parameter. The explanation for why this is useful will come after, but now let’s perform the following steps:
+
+Above the first test, write the following definition. Note that it still needs to be within the `describe` block because it uses the `container` variable:
+
+const render = component =>
+
+  act(() =>
+
+    ReactDOM.createRoot(container).render(component)
+
+  );
+
+Now, replace the call to render in each test with the following line of code:
+render(<Appointment customer={customer} />);
+
+In the preceding step, we inlined the JSX, passing it directly into render. That means you can now delete the line starting with const component. For example, your first test should end up looking as follows:
+it("renders the customer first name", () => {
+
+  const customer = { firstName: "Ashley" };
+
+  render(<Appointment customer={customer} />);
+
+  expect(document.body.textContent).toContain(
+
+    "Ashley"
+
+  );
+
+});
+
+Rerun your tests and verify that they are still passing.
+HIGHLIGHTING DIFFERENCES WITHIN YOUR TESTS
+
+The parts of a test that you want to highlight are the parts that differ between tests. Usually, some code remains the same (such as container and the steps needed to render a component) and some code differs (customer in this example). Do your best to hide away whatever is the same and highlight what differs. That way, it makes it obvious what a test is specifically testing.
+
+This section has covered a couple of simple ways of refactoring your code. As the book progresses, we’ll look at many different ways that both production source code and test code can be refactored.
+
+

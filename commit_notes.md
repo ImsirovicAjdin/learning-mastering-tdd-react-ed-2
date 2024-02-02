@@ -852,3 +852,61 @@ Snapshots:   0 total
 Time:        0.757 s, estimated 1 s
 Ran all test suites.
 ```
+
+## Your test should now be passing.
+
+Let’s move on to the next test. Add the following text, just below the last test in test/Appointment.test.js, still inside the AppointmentsDayView describe block:
+it("renders an ol element to display appointments", () => {
+
+  render(<AppointmentsDayView appointments={[]} />);
+
+  const listElement = document.querySelector("ol");
+
+  expect(listElement).not.toBeNull();
+
+});
+
+Run your tests again and you'll see output matching the text shown below:
+● AppointmentsDayView › renders an ol element to display appointments
+
+expect(received).not.toBeNull()
+
+""Received: null""
+
+Indeed, here's my `npm test`:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (14 ms)
+    ✓ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✕ renders an ol element to display appointments (4 ms)
+
+  ● AppointmentsDayView ›
+
+    expect(received).not.toBeNull()
+
+    Received: null
+
+      54 |         render(<AppointmentsDayView appointments={[]} />);
+      55 |         const listElement = document.querySelector("ol");
+    > 56 |         expect(listElement).not.toBeNull();
+         |                                 ^
+      57 |     });
+      58 | })
+      59 |
+
+      at Object.toBeNull (test/Appointment.test.js:56:33)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 3 passed, 4 total
+Snapshots:   0 total
+Time:        0.922 s, estimated 1 s
+Ran all test suites.
+```

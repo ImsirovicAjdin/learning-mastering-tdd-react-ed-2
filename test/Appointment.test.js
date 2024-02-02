@@ -100,4 +100,14 @@ describe("AppointmentsDayView", () => {
             "Ashley"
         );
     });
+    it("has a button element in each li", () => {
+        render(
+            <AppointmentsDayView
+                appointments={twoAppointments}
+            />
+        );
+        const buttons = document.querySelectorAll("li > button");
+        expect(buttons).toHaveLength(2);
+        expect(buttons[0].type).toEqual("button");
+    });
 });

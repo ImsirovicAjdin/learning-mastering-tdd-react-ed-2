@@ -1617,3 +1617,87 @@ Snapshots:   0 total
 Time:        1.02 s
 Ran all test suites.
 ```
+
+## Adding events to a functional component
+
+We’re about to add `state` to our component. The component will show a button for each appointment. When the button is clicked, the component stores the array index of the appointment that it refers to. To do that, we’ll use the `useState` hook.
+
+WHAT ARE HOOKS?
+
+**Hooks are a feature of React that manages various non-rendering related operations.**
+
+**The `useState` hook stores data across multiple renders of your function.**
+
+The call to `useState` returns both the current value in storage and a setter function that allows it to be set.
+
+If you’re new to hooks, check out the Further reading section at the end of this chapter. Alternatively, you could just follow along and see how much you can pick up just by reading the tests!
+
+We’ll start by asserting that each `li` element has a `button` element:
+
+Add the following test below the last one you added. The second expectation is peculiar in that it is checking the `type` attribute of the `button` element to be `button`. If you haven’t seen this before, it’s idiomatic when using button elements to define its role by setting the type attribute as shown in this test:
+it("has a button element in each li", () => {
+
+  render(
+
+    <AppointmentsDayView
+
+      appointments={twoAppointments}
+
+    />
+
+  );
+
+  const buttons =
+
+   document.querySelectorAll("li > button");
+
+  expect(buttons).toHaveLength(2);
+
+  expect(buttons[0].type).toEqual("button");
+
+});
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (10 ms)
+    ✓ renders an ol element to display appointments (5 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (4 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (2 ms)
+    ✕ has a button element in each li (4 ms)
+
+  ● AppointmentsDayView › has a button element in each li
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 0
+    Received object: []
+
+      108 |         );
+      109 |         const buttons = document.querySelectorAll("li > button");
+    > 110 |         expect(buttons).toHaveLength(2);
+          |                         ^
+      111 |         expect(buttons[0].type).toEqual("button");
+      112 |     });
+      113 | });
+
+      at Object.toHaveLength (test/Appointment.test.js:110:25)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 8 passed, 9 total
+Snapshots:   0 total
+Time:        0.98 s, estimated 1 s
+Ran all test suites.
+```

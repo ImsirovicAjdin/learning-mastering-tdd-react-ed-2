@@ -942,4 +942,93 @@ Time:        0.854 s, estimated 1 s
 Ran all test suites.
 ```
 
+## Alright, now let’s fill that ol with an item for each appointment.
 
+For that, we’ll need (at least) two appointments to be passed as the value of the appointments prop, as. Add the next test, as shown:
+it("renders an li for each appointment", () => {
+
+  const today = new Date();
+
+  const twoAppointments = [
+
+    { startsAt: today.setHours(12, 0) },
+
+    { startsAt: today.setHours(13, 0) },
+
+  ];
+
+  render(
+
+    <AppointmentsDayView
+
+      appointments={twoAppointments}
+
+    />
+
+  );
+
+  const listChildren =
+
+    document.querySelectorAll("ol > li");
+
+  expect(listChildren).toHaveLength(2);
+
+});
+
+TESTING DATES AND TIMES
+
+In the test, the today constant is defined to be new Date(). Each of the two records then uses this as a base date.
+
+**Whenever we’re dealing with dates, it’s important that we base all events on the same moment in time, rather than asking the system for the current time more than once. Doing that is a subtle bug waiting to happen.**
+
+Run npm test again and you'll see this output:
+● AppointmentsDayView › renders an li for each appointment
+
+expect(received).toHaveLength(expected)
+
+Expected length: 2
+
+Received length: 0
+
+Received object: []
+
+My result `npm test`:
+```
+npm test
+ 
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (12 ms)
+    ✓ renders another customer first name (4 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (9 ms)
+    ✓ renders an ol element to display appointments (3 ms)
+    ✕ renders an li for each appointment (4 ms)
+
+  ● AppointmentsDayView › renders an li for each appointment
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 0
+    Received object: []
+
+      68 |         );
+      69 |         const listChildren = document.querySelectorAll("ol > li");
+    > 70 |         expect(listChildren).toHaveLength(2);
+         |                              ^
+      71 |     });
+      72 | });
+      73 |
+
+      at Object.toHaveLength (test/Appointment.test.js:70:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 4 passed, 5 total
+Snapshots:   0 total
+Time:        0.913 s, estimated 1 s
+Ran all test suites.
+```

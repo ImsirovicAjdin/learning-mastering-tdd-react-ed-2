@@ -1342,3 +1342,35 @@ PASS test/Appointment.test.js
     ✓ renders an li for each appointment (6ms)
 
     ✓ renders the time of each appointment (3ms)
+
+## This is a great chance to refactor.
+
+The last two `AppointmentsDayView` tests use the same `twoAppointments` prop value. This definition, and the `today` constant, can be lifted out into the `describe` scope, the same way we did with `customer` in the `Appointment` tests. This time, however, it can remain as `const` declarations as they never change.
+
+To do that, move the `today` and `twoAppointments` definitions from one of the tests to the top of the `describe` block, above `beforeEach`. Then, delete the definitions from both tests.
+
+That’s it for this test. Next, it’s time to focus on adding click behavior.
+
+My `npm test` result after refactor:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        0.762 s, estimated 1 s
+Ran all test suites
+```

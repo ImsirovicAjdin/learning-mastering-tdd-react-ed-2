@@ -3224,3 +3224,90 @@ Snapshots:   0 total
 Time:        1.128 s
 Ran all test suites.
 ```
+
+## Chapter 4: Test-driving data input
+
+In this chapter, you’ll explore React forms and controlled components.
+
+Forms are an essential part of building web applications, being the primary way that users enter data. If we want to ensure our application works, then invariably, that’ll mean we need to write automated tests for our forms. What’s more, there’s a lot of plumbing required to get forms working in React, making it even more important that they’re well-tested.
+
+Automated tests for forms are all about the user’s behavior: entering text, clicking buttons, and submitting the form when complete.
+
+We will build out a new component, CustomerForm, which we will use when adding or modifying customers. It will have three text fields: first name, last name, and phone number.
+
+In the process of building this form, you’ll dig deeper into testing complex DOM element trees. You’ll learn how to use parameterized tests to repeat a group of tests without duplicating code.
+
+The following topics will be covered in this chapter:
+
+Adding a form element
+Accepting text input
+Submitting a form
+Duplicating tests for multiple form fields
+By the end of this chapter, you’ll have a decent understanding of test-driving HTML forms with React.
+
+Technical requirements
+The code files for this chapter can be found here: https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter04.
+
+Adding a form element
+An HTML form is a bunch of fields wrapped in a form element. Even though we’re mostly interested in the fields, we need to start with the form element itself. That’s what we’ll build in this section.
+
+Let’s create our first form by following these steps:
+
+Create a new file called test/CustomerForm.test.js and add the following scaffold. It contains all the usual imports and component test initialization that you’ve seen in the previous chapters:
+import React from "react";
+
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  element,
+
+} from "./reactTestExtensions";
+
+import { CustomerForm } from "../src/CustomerForm";
+
+describe("CustomerForm", () => {
+
+  beforeEach(() => {
+
+    initializeReactContainer();
+
+  });
+
+});
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● Test suite failed to run
+
+    Cannot find module '../src/CustomerForm' from 'test/CustomerForm.test.js'
+
+       7 | } from "./reactTestExtensions";
+       8 |
+    >  9 | import { CustomerForm } from "../src/CustomerForm";
+         | ^
+      10 |
+      11 | describe("CustomerForm", () => {
+      12 |     beforeEach(() => {
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (test/CustomerForm.test.js:9:1)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       36 passed, 36 total
+Snapshots:   0 total
+Time:        1.455 s
+Ran all test suites.
+```

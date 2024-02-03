@@ -1874,3 +1874,12 @@ Change the `map` call to include an index in its arguments. Let’s just name th
   </li>
 
 ))}
+
+Now call setSelectedAppointment from within the onClick handler on the button element as follows:
+<button
+
+  type="button"
+
+  onClick={() => setSelectedAppointment(i)}
+
+>

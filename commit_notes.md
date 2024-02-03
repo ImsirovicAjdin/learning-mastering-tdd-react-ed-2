@@ -1847,3 +1847,15 @@ const [selectedAppointment, setSelectedAppointment] =
 
   useState(0);
 
+We can now use `selectedAppointment` rather than hardcoding an index selecting the right appointment. Change the return value to use this new state value when selecting an appointment, like this:
+<div id="appointmentsDayView">
+
+  ...
+
+  <Appointment
+
+    {...appointments[selectedAppointment]}
+
+  />
+
+</div>

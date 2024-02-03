@@ -2650,3 +2650,120 @@ Snapshots:   0 total
 Time:        1.004 s
 Ran all test suites.
 ```
+
+## Creating a Jest matcher using TDD
+
+In our tests so far, we’ve used a variety of matchers. These functions tack on to the end of the expect function call:
+
+expect(appointmentTable()).not.toBeNull();
+
+In this section, you’ll build a matcher using a test-driven approach to make sure it’s doing the right thing. You’ll learn about the Jest matcher API as you build your test suite.
+
+You’ve seen quite a few matchers so far: toBeNull, toContain, toEqual, and toHaveLength. You’ve also seen how they can be negated with not.
+
+**Matchers are a powerful way of building expressive yet concise tests. You should take some time to learn all the matchers that Jest has to offer.**
+
+JEST MATCHER LIBRARIES
+
+There are a lot of different matcher libraries available as npm packages. Although we won’t use them in this book (since we’re building everything up from first principles), you should make use of these libraries. See the Further reading section at the end of this chapter for a list of libraries that will be useful to you when testing React components.
+
+Often, you’ll want to build matchers. There are at least a couple of occasions that will prompt you to do this:
+
+An expectation you’re writing is quite wordy, lengthy, or just doesn’t read well in plain language.
+Some of the tests are repeating the same group of expectations again and again. This is a sign that you have a business concept that you can encode in a single matcher that will be specific to your project.
+The second point is an interesting one. If you’re writing the same expectations multiple times across multiple tests, you should treat it just like you would if it was repeated code in your production source code. You’d pull that out into a function. Here, the matcher serves the same purpose, except using a matcher instead of a function helps remind you that this line of code is a special statement of fact about your software: a specification.
+
+ONE EXPECTATION PER TEST
+
+You should generally aim for just one expectation per test. "Future you" will thank you for keeping things simple! (In Chapter 5, Adding Complex Form Interactions, we’ll look at a situation where multiple expectations are beneficial.)
+
+You might hear this guideline and be instantly horrified. You might be imagining an explosion of tiny tests. But if you’re ready to write matchers, you can aim for one expectation per test and still keep the number of tests down.
+
+The matcher we’re going to build in this section is called `toContainText`. It will replace the following expectation:
+
+
+expect(appointmentTable().textContent).toContain("Ashley");
+
+It will replace it with the following form, which is slightly more readable:
+
+expect(appointmentTable()).toContainText("Ashley");
+
+Here’s what the output looks like on the terminal:
+
+Figure 3.1 – The output of the toContainText matcher when it fails
+Figure 3.1 – The output of the toContainText matcher when it fails
+
+Let’s get started:
+
+1.
+Create a new directory named test/matchers. This is where both the source code and tests for the matchers will live.
+
+2.
+Create the new test/matchers/toContainText.test.js file.
+
+3.
+Write the first test, as shown here. This test introduces a couple of new ideas.
+
+First, it shows that matcher is a function that takes two parameters: the actual element and the data to match on. Second, it shows that the function returns an object with a pass property. This property is true if the matcher successfully “matched” – in other words, it passed:
+import { toContainText } from "./toContainText";
+
+describe("toContainText matcher", () => {
+
+  it("returns pass is true when text is found in the given DOM element", () => {
+
+    const domElement = {
+
+      textContent: "text to find"
+
+    };
+
+    const result = toContainText(
+
+      domElement,
+
+      "text to find"
+
+    );
+
+    expect(result.pass).toBe(true);
+
+  });
+
+});
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/matchers/toContainText.test.js
+  ● Test suite failed to run
+
+    Cannot find module './toContainText' from 'test/matchers/toContainText.test.js'
+
+    However, Jest was able to find:
+        './toContainText.test.js'
+
+    You might want to include a file extension in your import, or update your 'moduleFileExtensions', which is currently ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'json', 'node'].
+
+    See https://jestjs.io/docs/configuration#modulefileextensions-arraystring
+
+    > 1 | import { toContainText } from "./toContainText";
+        | ^
+      2 |
+      3 | describe("toContainText matcher", () => {
+      4 |     it("returns pass is true when text is found in the given DOM element", () => {
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (test/matchers/toContainText.test.js:1:1)
+
+ PASS  test/AppointmentsDayView.test.js
+
+Test Suites: 1 failed, 1 passed, 2 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.057 s
+Ran all test suites.
+```

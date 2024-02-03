@@ -3363,3 +3363,51 @@ Time:        1.404 s
 Ran all test suites.
 ```
 
+## So, create a blank file named src/CustomerForm.js. Running your test again should give you the following output:
+FAIL test/CustomerForm.test.js
+
+● CustomerForm › renders a form
+
+   Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+       8 |
+
+       9 | export const render = (component) =>
+
+    > 10 |   act(() =>
+
+      11 |     ReactDOM.createRoot(...).render(...)
+
+         |     ^
+
+      12 |   );
+
+      11 |
+
+      12 | export const click = (element) =>
+
+      13 |   act(() => element.click());
+
+** My `npm test` result after the above:**
+```
+Same as above...
+```
+
+## STACK TRACES FROM TEST HELPER CODE
+
+Jest’s stack trace points to a failure within our extensions code, not the test itself. If our code was in an npm module, Jest would have skipped those test lines from its output. Thankfully, the error message is helpful enough.
+
+To fix this issue, we need to add an export that matches the import we wrote at the top of our test file. Add the following line to src/CustomerForm.js:
+export const CustomerForm = () => null;
+
+Running some tests gives the actual expectation failure:
+● CustomerForm › renders a form
+
+  expect(received).not.toBeNull()
+
+  Received: null
+
+**My `npm test` result after the above:**
+```
+The same as above...
+```

@@ -2175,3 +2175,17 @@ Snapshots:   0 total
 Time:        1.032 s
 Ran all test suites.
 ```
+
+3.
+Add a heading to Appointment to make it clear which appointment time is being viewed.
+
+4.
+There is some repeated sample data. We’ve used sample data in our tests, and we also have sampleAppointments in src/sampleData.js, which we used to manually test our application. Do you think it is worth drying this up? If so, why? If not, why not?
+
+Further reading
+
+Hooks are a relatively recent addition to React. Traditionally, React used classes for building components with state. For an overview of how hooks work, take a look at React’s own comprehensive documentation at the following link:
+
+https://reactjs.org/docs/hooks-overview.html.
+
+

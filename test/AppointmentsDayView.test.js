@@ -1,13 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { act } from "react-dom/test-utils";
 import {
     Appointment,
     AppointmentsDayView,
 } from "../src/AppointmentsDayView";
 import {
     initializeReactContainer,
+    container,
     render,
+    click,
 } from "./reactTestExtensions";
 
 describe("Appointment", () => {
@@ -109,7 +110,7 @@ describe("AppointmentsDayView", () => {
             />
         );
         const button = document.querySelectorAll("button")[1];
-        act(() => button.click());
+        click(button);
         expect(document.body.textContent).toContain(
             "Jordan"
         );

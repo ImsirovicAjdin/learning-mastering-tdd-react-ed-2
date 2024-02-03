@@ -2575,3 +2575,78 @@ Time:        1.026 s
 Ran all test suites.
 ```
 
+## So far, we've extracted two functions. We have one more to do: the click function. However, we have one more “action” function that we can create: click. Let’s do that now:
+
+1.
+Create the click function in your test extensions file, as shown here:
+export const click = (element) =>
+
+  act(() => element.click());
+
+2.
+Back in your test file, adjust your import:
+import {
+
+  initializeReactContainer,
+
+  container,
+
+  render,
+
+  click,
+
+} from "./reactTestExtensions";
+
+3.
+In your test suite, replace each invocation of the click function with the following line:
+click(button);
+
+4.
+The act import is no longer needed in your test suite. Go ahead and delete that import from your test file.
+
+5.
+Run npm test and verify that your tests are still passing.
+
+AVOIDING THE ACT FUNCTION IN YOUR TEST CODE
+
+The act function causes a fair amount of clutter in tests, which doesn’t help in our quest for conciseness. Thankfully, we can push it out into our extensions module and be done with it.
+
+Remember the Arrange-Act-Assert pattern that our tests should always follow? Well, we’ve now extracted everything we can from the Arrange and Act sections.
+
+**The approach we’ve taken here, of using an exported container variable, isn’t the only approach worth exploring. You could, for example, build a wrapper function for describe that automatically includes a beforeEach block and builds a container variable that’s accessible within the scope of that describe block. You could name it something like describeReactComponent.**
+
+Above: @TODO ChatGPT
+
+An advantage of this approach is that it involves a lot less code – you won’t be dealing with all those imports, and you could get rid of your beforeEach block in the test suites. The downside is that it’s very clever, which is not always a good thing when it comes to maintainability. There’s something a bit magical about it that requires a certain level of prior knowledge.
+
+That being said, if this approach appeals to you, I encourage you to try it out.
+
+In the next section, we’ll start to tackle the Assert section of our tests.
+
+**Result of my `npm test` run:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+  Appointment
+    ✓ renders the customer first name (18 ms)
+    ✓ renders another customer first name (4 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (12 ms)
+    ✓ renders an ol element to display appointments (5 ms)
+    ✓ renders an li for each appointment (7 ms)
+    ✓ renders the time of each appointment (6 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (3 ms)
+    ✓ has a button element in each li (5 ms)
+    ✓ renders another appointment when selected (10 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.004 s
+Ran all test suites.
+```

@@ -1859,3 +1859,18 @@ We can now use `selectedAppointment` rather than hardcoding an index selecting t
   />
 
 </div>
+
+Change the `map` call to include an index in its arguments. Let’s just name that i as shown here:
+{appointments.map((appointment, i) => (
+
+  <li key={appointment.startsAt}>
+
+    <button type="button">
+
+      {appointmentTimeOfDay(appointment.startsAt)}
+
+    </button>
+
+  </li>
+
+))}

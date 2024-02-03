@@ -1940,3 +1940,198 @@ Ran all test suites.
 We’ve covered a lot of detail in this section, starting with specifying the initial state of the view through to adding a button element and handling its onClick event.
 
 We now have enough functionality that it makes sense to try it out and see where we’re at.
+
+## Manually testing our changes
+
+The words manual testing should strike fear into the heart of every TDDer because it takes up so much time. Avoid it when you can. Of course, we can’t avoid it entirely – when we’re done with a complete feature, we need to give it a once-over to check we’ve done the right thing.
+
+As it stands, we can’t yet run our app. To do that, we’ll need to add an entry point and then use webpack to bundle our code.
+
+Adding an entry point
+React applications are composed of a hierarchy of components that are rendered at the root. Our application entry point should render this root component.
+
+We tend to not test-drive entry points because any test that loads our entire application can become quite brittle as we add more and more dependencies into it. In Part 4, Behavior-Driven Development with Cucumber, we’ll look at using Cucumber tests to write some tests that will cover the entry point.
+
+Since we aren’t test-driving it, we follow a couple of general rules:
+
+Keep it as brief as possible
+Only use it to instantiate dependencies for your root component and to call render
+Before we run our app, we’ll need some sample data. Create a file named src/sampleData.js and fill it with the following code:
+
+
+const today = new Date();
+const at = (hours) => today.setHours(hours, 0);
+export const sampleAppointments = [
+  { startsAt: at(9), customer: { firstName: "Charlie" } },
+  { startsAt: at(10), customer: { firstName: "Frankie" } },
+  { startsAt: at(11), customer: { firstName: "Casey" } },
+  { startsAt: at(12), customer: { firstName: "Ashley" } },
+  { startsAt: at(13), customer: { firstName: "Jordan" } },
+  { startsAt: at(14), customer: { firstName: "Jay" } },
+  { startsAt: at(15), customer: { firstName: "Alex" } },
+  { startsAt: at(16), customer: { firstName: "Jules" } },
+  { startsAt: at(17), customer: { firstName: "Stevie" } },
+];
+IMPORTANT NOTE
+
+The Chapter02/Complete directory in the GitHub repository contains a more complete set of sample data.
+
+This list also doesn’t need to be test-driven for the following couple of reasons:
+
+It’s a list of static data with no behavior. Tests are all about specifying behavior, and there’s none here.
+This module will be removed once we begin using our backend API to pull data.
+TIP
+
+TDD is often a pragmatic choice. Sometimes, not test-driving is the right thing to do.
+
+Create a new file, src/index.js, and enter the following code:
+
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { AppointmentsDayView } from "./Appointment";
+import { sampleAppointments } from "./sampleData";
+ReactDOM.createRoot(
+  document.getElementById("root")
+).render(
+  <AppointmentsDayView appointments={sampleAppointments} />
+);
+That’s all you’ll need.
+
+Putting it all together with webpack
+Jest uses Babel to transpile all our code when it’s run in the test environment. But what about when we’re serving our code via our website? Jest won’t be able to help us there.
+
+That’s where webpack comes in, and we can introduce it now to help us do a quick manual test as follows:
+
+Install webpack using the following command:
+npm install --save-dev webpack webpack-cli babel-loader
+
+Add the following code to the scripts section of your package.json file:
+"build": "webpack",
+
+You’ll also need to set some configuration for webpack. Create the webpack.config.js file in your project root directory with the following content:
+const path = require("path");
+
+const webpack = require("webpack");
+
+module.exports = {
+
+  mode: "development",
+
+  module: {
+
+    rules: [
+
+      {
+
+        test: /\.(js|jsx)$/,
+
+        exclude: /node_modules/,
+
+        loader: "babel-loader",
+
+      },
+
+    ],
+
+  },
+
+};
+
+This configuration works for webpack in development mode. Consult the webpack documentation for information on setting up production builds.
+
+In your source directory, run the following commands:
+mkdir dist
+
+touch dist/index.html
+
+Add the following content to the file you just created:
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+
+    <title>Appointments</title>
+
+  </head>
+
+  <body>
+
+    <div id="root"></div>
+
+    <script src="main.js"></script>
+
+  </body>
+
+</html>
+
+You’re now ready to run the build using the following command:
+npm run build
+
+You should see output such as the following:
+
+modules by path ./src/*.js 2.56 KiB
+
+  ./src/index.js 321 bytes [built] [code generated]
+
+  ./src/Appointment.js 1.54 KiB [built] [code generated]
+
+  ./src/sampleData.js 724 bytes [built] [code generated]
+
+webpack 5.65.0 compiled successfully in 1045 ms
+
+Open dist/index.html in your browser and behold your creation!
+The following screenshot shows the application once the Exercises are completed, with added CSS and extended sample data. To include the CSS, you’ll need to pull dist/index.html and dist/styles.css from the Chapter02/Complete directory.
+
+Figure 2.2 – The application so far
+Figure 2.2 – The application so far
+
+BEFORE YOU COMMIT YOUR CODE INTO GIT...
+
+Make sure to add dist/main.js to your .gitignore file as follows:
+
+echo "dist/main.js" >> .gitignore
+
+The main.js file is generated by webpack, and as with most generated files, you shouldn’t check it in.
+
+You may also want to add README.md at this point to remind yourself how to run tests and how to build the application.
+
+You’ve now seen how to put TDD aside while you created an entry point: since the entry point is small and unlikely to change frequently, we’ve opted not to test-drive it.
+
+Summary
+In this chapter, you’ve been able to practice the TDD cycle a few times and get a feel for how a feature can be built out using tests as a guide.
+
+We started by designing a quick mock-up that helped us decide our course of action. We have built a container component (AppointmentsDayView) that displayed a list of appointment times, with the ability to display a single Appointment component depending on which appointment time was clicked.
+
+We then proceeded to get a basic list structure in place, then extended it to show the initial Appointment component, and then finally added the onClick behavior.
+
+This testing strategy, of starting with the basic structure, followed by the initial view, and finishing with the event behavior, is a typical strategy for testing components.
+
+We’ve only got a little part of the way to fully building our application. The first few tests of any application are always the hardest and take the longest to write. We are now over that hurdle, so we’ll move quicker from here onward.
+
+My `npm run build` output:
+```
+npm run build
+
+> my-mastering-tdd@1.0.0 build
+> webpack
+
+asset main.js 1.13 MiB [emitted] (name: main)
+runtime modules 1.04 KiB 5 modules
+modules by path ./node_modules/ 1.08 MiB
+  modules by path ./node_modules/@babel/runtime/helpers/esm/*.js 2.04 KiB 6 modules
+  modules by path ./node_modules/react-dom/ 1000 KiB 3 modules
+  modules by path ./node_modules/react/ 85.7 KiB
+    ./node_modules/react/index.js 190 bytes [built] [code generated]
+    ./node_modules/react/cjs/react.development.js 85.5 KiB [built] [code generated]
+  modules by path ./node_modules/scheduler/ 17.3 KiB
+    ./node_modules/scheduler/index.js 198 bytes [built] [code generated]
+    ./node_modules/scheduler/cjs/scheduler.development.js 17.1 KiB [built] [code generated]
+modules by path ./src/*.js 2.61 KiB
+  ./src/index.js 328 bytes [built] [code generated]
+  ./src/Appointment.js 1.58 KiB [built] [code generated]
+  ./src/sampleData.js 722 bytes [built] [code generated]
+webpack 5.90.1 compiled successfully in 964 ms
+```
+

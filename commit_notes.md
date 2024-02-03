@@ -2797,3 +2797,412 @@ Snapshots:   0 total
 Time:        1.081 s
 Ran all test suites.
 ```
+
+## We need to triangulate to get to the real implementation. Write the next test, as shown here:
+it("return pass is false when the text is not found in the given DOM element", () => {
+
+  const domElement = { textContent: "" };
+
+  const result = toContainText(
+
+    domElement,
+
+    "text to find"
+
+  );
+
+  expect(result.pass).toBe(false);
+
+});
+
+6.
+Now, continue the implementation for our matcher, as shown here. At this stage, you have a functioning matcher – it just needs to be plugged into Jest:
+export const toContainText = (
+
+  received,
+
+  expectedText
+
+) => ({
+
+  pass: received.textContent.includes(expectedText)
+
+});
+
+
+**My `npm test` result:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        1.031 s
+Ran all test suites.
+```
+
+7.
+Before we make use of this, it’s good practice to fill in an expected second property of your return value: message. So, go ahead and do that. The following test shows that we expect the message to contain the matcher text itself, as a useful reminder to the programmer:
+it("returns a message that contains the source line if no match", () => {
+
+  const domElement = { textContent: "" };
+
+  const result = toContainText(
+
+    domElement,
+
+    "text to find"
+
+  );
+
+  expect(
+
+    stripTerminalColor(result.message())
+
+  ).toContain(
+
+    `expect(element).toContainText("text to find")`
+
+  );
+
+});
+
+UNDERSTANDING THE MESSAGE FUNCTION
+
+The requirements for the message function are complex. At a basic level, it is a helpful string that is displayed when the expectation fails. However, it’s not just a string – it’s a function that returns a string. This is a performance feature: the value of message does not need to be evaluated unless there is a failure. But even more complicated is the fact that the message should change, depending on whether the expectation was negated or not. If pass is false, then the message function should assume that the matcher was called in the “positive” sense – in other words, without a .not qualifier. But if pass is true, and the message function ends up being invoked, then it’s safe to assume that it was negated. We’ll need another test for this negated case, which comes a little later.
+
+This function uses a stripTerminalColor function that we should now define, above the test suite. Its purpose is to remove any ASCII escape codes that add colors:
+const stripTerminalColor = (text) =>
+
+    text.replace(/\x1B\[\d+m/g, "");
+
+TESTING ASCII ESCAPE CODES
+
+As you’ve seen already, when Jest prints out test failures, you’ll see a bunch of red and green colorful text. That’s achieved by printing ASCII escape codes within the text string.
+
+This is a tricky thing to test. Because of that, we’re making a pragmatic choice to not bother testing colors. Instead, the stripTerminalColor function strips out these escape codes from the string so that you can test the text output as if it was plain text.
+
+Make that test pass by making use of Jest’s matcherHint and printExpected functions, as shown here. It isn’t particularly clear how the matcherHint function works but, hopefully, you can convince yourself that it does what we expect by running tests and seeing the last one pass! The printExpected functions add quotes to our value and colors it green:
+import {
+
+  matcherHint,
+
+  printExpected,
+
+} from "jest-matcher-utils";
+
+export const toContainText = (
+
+  received,
+
+  expectedText
+
+) => {
+
+  const pass =
+
+    received.textContent.includes(expectedText);
+
+  const message = () =>
+
+    matcherHint(
+
+      "toContainText",
+
+      "element",
+
+      printExpected(expectedText),
+
+      { }
+
+    );
+
+  return { pass, message };
+
+};
+
+LEARNING ABOUT JEST’S MATCHER UTILITIES
+
+At the time of writing, I’ve found the best way to learn what the Jest matcher utility functions do is to read their source. You could also avoid them entirely if you like – there’s no obligation to use them.
+
+Now comes the complicated part. Add the following test, which specifies the scenario of a failed expectation when using the negated matcher. The message should reflect that the matcher was negated, as shown here:
+it("returns a message that contains the source line if negated match", () => {
+
+  const domElement = { textContent: "text to find" };
+
+  const result = toContainText(
+
+    domElement,
+
+    "text to find"
+
+  );
+
+  expect(
+
+    stripTerminalColor(result.message())
+
+  ).toContain(
+
+    `expect(container).not.toContainText("text to find")`
+
+  );
+
+});
+
+To make that pass, pass a new option to matcherHint:
+...
+
+matcherHint(
+
+  "toContainText",
+
+  "element",
+
+  printExpected(expectedText),
+
+  { isNot: pass }
+
+);
+
+There’s one final test to add. We can print out the actual textContent property value of the element, which will help debug test failures when they occur. Add the following test:
+it("returns a message that contains the actual text", () => {
+
+  const domElement = { textContent: "text to find" };
+
+  const result = toContainText(
+
+    domElement,
+
+    "text to find"
+
+  );
+
+  expect(
+
+    stripTerminalColor(result.message())
+
+  ).toContain(`Actual text: "text to find"`);
+
+});
+
+Make it pass by adjusting your matcher code, as shown here. Note the use of the new printReceived function, which is the same as printExpected except it colors the text red instead of green:
+import {
+
+  matcherHint,
+
+  printExpected,
+
+  printReceived,
+
+} from "jest-matcher-utils";
+
+export const toContainText = (
+
+  received,
+
+  expectedText
+
+) => {
+
+  const pass =
+
+    received.textContent.includes(expectedText);
+
+  const sourceHint = () =>
+
+    matcherHint(
+
+      "toContainText",
+
+      "element",
+
+      printExpected(expectedText),
+
+      { isNot: pass }
+
+    );
+
+  const actualTextHint = () =>
+
+    "Actual text: " +
+
+    printReceived(received.textContent);
+
+  const message = () =>
+
+    [sourceHint(), actualTextHint()].join("\n\n");
+
+  return { pass, message };
+
+};
+
+It’s time to plug the test into Jest. To do that, create a new file called test/domMatchers.js with the following content:
+import {
+
+  toContainText
+
+} from "./matchers/toContainText";
+
+expect.extend({
+
+  toContainText,
+
+});
+
+Open package.json and update your Jest configuration so that it loads this file before your tests run:
+"jest": {
+
+  ...,
+
+  "setupFilesAfterEnv": ["./test/domMatchers.js"]
+
+}
+
+Your new matcher is ready to use. Open test/AppointmentsDayView.test.js and change all your tests that use the expect(<element>.textContent).toEqual(<text>)and expect(<element>.textContent).toContain(<text>) forms. They should be replaced with expect(<element>).toContainText(<text>).
+Run your tests; you should see them all still passing. Take a moment to play around and see how your matcher works. First, change one of the expected text values to something incorrect, and watch the matcher fail. See how the output messages look. Then, change the expected value back to the correct one, but negate the matcher by changing it to .not.toContainText. Finally, revert your code to the all-green state.
+WHY DO WE TEST-DRIVE MATCHERS?
+
+You should write tests for any code that isn’t just simply calling other functions or setting variables. At the start of this chapter, you extracted functions such as render and click. These functions didn’t need tests because you were just transplanting the same line of code from one file to another. But this matcher does something much more complex – it must return an object that conforms to the pattern that Jest requires. It also makes use of Jest’s utility functions to build up a helpful message. That complexity warrants tests.
+
+If you are building matchers for a library, you should be more careful with your matcher’s implementation. For example, we didn’t bother to check that the received value is an HTML element. That’s fine because this matcher exists in our code base only, and we control how it’s used. When you package matchers for use in other projects, you should also verify that the function inputs are values you’re expecting to see.
+
+You’ve now successfully test-driven your first matcher. There will be more opportunities for you to practice this skill as this book progresses. For now, we’ll move on to the final part of our cleanup: creating some fluent DOM helpers.
+
+Extracting DOM helpers
+In this section, we’ll pull out a bunch of little functions that will help our tests become more readable. This will be straightforward compared to the matcher we’ve just built.
+
+The reactTestExtensions.js module already contains three functions that you’ve used: initializeReactContainer, render, and click.
+
+Now, we’ll add four more: element, elements, typesOf, and textOf. These functions are designed to help your tests read much more like plain English. Let’s take a look at an example. Here are the expectations for one of our tests:
+
+
+const listChildren = document.querySelectorAll("li");
+expect(listChildren[0].textContent).toEqual("12:00");
+expect(listChildren[1].textContent).toEqual("13:00");
+We can introduce a function, elements, that is a shorter version of document.querySelectorAll. The shorter name means we can get rid of the extra variable:
+
+
+expect(elements("li")[0].textContent).toEqual("12:00");
+expect(elements("li")[1].textContent).toEqual("13:00");
+This code is now calling querySelectorAll twice – so it’s doing more work than before – but it’s also shorter and more readable. And we can go even further. We can boil this down to one expect call by matching on the elements array itself. Since we need textContent, we will simply build a mapping function called textOf that takes that input array and returns the textContent property of each element within it:
+
+
+expect(textOf(elements("li"))).toEqual(["12:00", "13:00"]);
+The toEqual matcher, when applied to arrays, will check that each array has the same number of elements and that each element appears in the same place.
+
+We’ve reduced our original three lines of code to just one!
+
+Let’s go ahead and build these new helpers:
+
+Open test/reactTestExtensions.js and add the following definitions at the bottom of the file. You’ll notice that the elements are using Array.from. This is so that the resulting array can be mapped over by both typesOf and textOf:
+export const element = (selector) =>
+
+  document.querySelector(selector);
+
+export const elements = (selector) =>
+
+  Array.from(document.querySelectorAll(selector));
+
+export const typesOf = (elements) =>
+
+  elements.map((element) => element.type);
+
+export const textOf = (elements) =>
+
+  elements.map((element) => element.textContent);
+
+Open test/AppointmentsDayView.test.js and change the extensions import to include all these new functions:
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  click,
+
+  element,
+
+  elements,
+
+  textOf,
+
+  typesOf,
+
+} from "./reactTestExtensions";
+
+Now, do a search and replace for document.querySelectorAll, replacing each occurrence with elements. Run npm test and verify that your tests still pass.
+Search for and replace document.querySelector, replacing each occurrence with element. Again, run your tests and check that everything is fine.
+You will see that the test renders at the time of the appointment. Replace the existing expectations with this one:
+expect(textOf(elements("li"))).toEqual([
+
+  "12:00", "13:00"
+
+]);
+
+Find the "has a button element in each li" test and replace the existing expectations with the following single expectation. Observe that the expectation on the length of the array is no longer necessary if your expectation tests the entire array:
+expect(typesOf(elements("li > *"))).toEqual([
+
+  "button",
+
+  "button",
+
+]);
+
+The final three tests pull out the second button on the screen using elements("button")[1]. Push this definition up, just below the beforeEach block, and give it a more descriptive name:
+const secondButton = () => elements("button")[1];
+
+Now, you can use this in the three tests. Go ahead and update them now. For example, the middle test can be updated as follows:
+click(secondButton());
+
+expect(secondButton().className).toContain("toggled");
+
+As a final touch, inline the listChild and listElement variables that appear in some of the tests – in other words, remove the use of variables and call the function directly within the expectation. As an example, the "renders an ol element to display appointments" test can have its expectation rewritten, as follows:
+expect(element("ol")).not.toBeNull();
+
+Run npm test one final time and verify that everything is still green.
+NOT ALL HELPERS NEED TO BE EXTRACTED
+
+You’ll notice that the helpers you have extracted are all very generic – they make no mention of the specific components under test. It’s good to keep helpers as generic as possible. On the other hand, sometimes it helps to have very localized helper functions. In your test suite, you already have one called appointmentsTable and another called secondButton. These should remain in the test suite because they are local to the test suite.
+
+In this section, you’ve seen our final technique for simplifying your test suites, which is to pull out fluent helper functions that help keep your expectations short and help them read like plain English.
+
+You've also seen the trick of running expectations on an array of items rather than having an expectation for individual items. This isn’t always the appropriate course of action. You’ll see an example of this in Chapter 5, Adding Complex Form Interactions.
+
+Summary
+This chapter focused on improving our test suites. Readability is crucially important. Your tests act as specifications for your software. Each component test must clearly state what the expectation of the component is. And when a test fails, you want to be able to understand why it’s failed as quickly as possible.
+
+You’ve seen that these priorities are often in tension with our usual idea of what good code is. For example, in our tests, we are willing to sacrifice performance if it makes the tests more readable.
+
+If you’ve worked with React tests in the past, think about how long an average test was.In this chapter, you've seen a couple of mechanisms for keeping your test short: building domain-specific matchers and extracting little functions for querying the DOM.
+
+You’ve also learned how to pull out React initialization code to avoid clutter in our test suites.
+
+In the next chapter, we’ll move back to building new functionality into our app: data entry with forms.
+
+Exercises
+Using the techniques you’ve just learned, create a new matcher named toHaveClass that replaces the following expectation:
+
+
+expect(secondButton().className).toContain("toggled");
+With your new matcher in place, it should read as follows:
+
+
+expect(secondButton()).toHaveClass("toggled"); 
+There is also the negated form of this matcher:
+
+
+expect(secondButton().className).not.toContain("toggled");
+Your matcher should work for this form and display an appropriate failure message.
+
+Further reading
+To learn more about the topics that were covered in this chapter, take a look at the following resources:
+
+The following GitHub repository contains useful matchers for testing React components: https://github.com/jest-community/jest-extended
+The following link provides the source of Jest’s matcher utilities, which I find useful for figuring out how to write simple matchers: https://github.com/facebook/jest/tree/main/packages/jest-matcher-utils

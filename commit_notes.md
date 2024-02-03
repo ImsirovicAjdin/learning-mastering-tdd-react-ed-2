@@ -2767,3 +2767,33 @@ Snapshots:   0 total
 Time:        1.057 s
 Ran all test suites.
 ```
+
+## Create another new file called test/matchers/toContainText.js. This first test is trivial to make pass:
+export const toContainText = (
+
+  received,
+
+  expectedText
+
+) => ({
+
+  pass: true
+
+});
+
+My `npm test` result:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 2 passed, 2 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        1.081 s
+Ran all test suites.
+```

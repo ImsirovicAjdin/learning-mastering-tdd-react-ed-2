@@ -3194,7 +3194,7 @@ expect(secondButton().className).toContain("toggled");
 With your new matcher in place, it should read as follows:
 
 
-expect(secondButton()).toHaveClass("toggled"); 
+expect(secondButton()).toHaveClass("toggled");
 There is also the negated form of this matcher:
 
 

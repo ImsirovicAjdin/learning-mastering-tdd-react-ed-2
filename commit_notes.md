@@ -3411,3 +3411,57 @@ Running some tests gives the actual expectation failure:
 ```
 The same as above...
 ```
+
+## This can be fixed by making the component return something:
+
+import React from "react";
+
+export const CustomerForm = () => <form />;
+
+Before moving on, let’s pull out a helper for finding the form element. As in the previous chapter, this is arguably premature as we have only one test using this code right now. However, we’ll appreciate having the helper when we come to write our form submission tests later.
+
+Open test/reactTestExtensions.js and add the following function:
+export const form = (id) => element("form");
+
+Modify your test file by adding the following import. You can leave the element import in place because we’ll use it later in the next section:
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  element,
+
+  form,
+
+} from "./reactTestExtensions";
+
+Finally, update your test to use the helper, as shown here. After this, your test should still be passing:
+it("renders a form", () => {
+
+  render(<CustomerForm />);
+
+  expect(form()).not.toBeNull();
+
+});
+
+That’s all there is to creating the basic form element. With that wrapper in place, we’re now ready to add our first field element: a text box.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       37 passed, 37 total
+Snapshots:   0 total
+Time:        1.335 s
+Ran all test suites.
+```

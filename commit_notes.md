@@ -2135,3 +2135,7 @@ modules by path ./src/*.js 2.61 KiB
 webpack 5.90.1 compiled successfully in 964 ms
 ```
 
+Exercises
+1.
+Rename Appointment.js and Appointment.test.js to AppointmentsDayView.js and AppointmentsDayView.test.js. While it’s fine to include multiple components in one file if they form a hierarchy, you should always name the file after the root component for that hierarchy.
+

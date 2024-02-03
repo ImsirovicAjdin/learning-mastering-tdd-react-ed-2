@@ -3206,3 +3206,21 @@ To learn more about the topics that were covered in this chapter, take a look at
 
 The following GitHub repository contains useful matchers for testing React components: https://github.com/jest-community/jest-extended
 The following link provides the source of Jest’s matcher utilities, which I find useful for figuring out how to write simple matchers: https://github.com/facebook/jest/tree/main/packages/jest-matcher-utils
+
+## My `npm test` results after the above:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 3 passed, 3 total
+Tests:       36 passed, 36 total
+Snapshots:   0 total
+Time:        1.128 s
+Ran all test suites.
+```

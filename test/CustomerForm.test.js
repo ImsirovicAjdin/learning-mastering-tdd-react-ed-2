@@ -12,4 +12,8 @@ describe("CustomerForm", () => {
     beforeEach(() => {
         initializeReactContainer();
     });
+    it("renders a form", () => {
+        render(<CustomerForm />);
+        expect(element("form")).not.toBeNull();
+    });
 });

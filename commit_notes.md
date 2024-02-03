@@ -3311,3 +3311,55 @@ Snapshots:   0 total
 Time:        1.455 s
 Ran all test suites.
 ```
+
+## Now you’re ready to create your first test. Add the following test to the describe block:
+it("renders a form", () => {
+
+  render(<CustomerForm />);
+
+  expect(element("form")).not.toBeNull();
+
+});
+
+We have a complete test, so let’s run it and see what happens:
+FAIL test/CustomerForm.test.js
+
+  ● Test suite failed to run
+
+    Cannot find module '../src/CustomerForm' from 'CustomerForm.test.js'
+
+The failure tells us that it can’t find the module. That’s because we haven’t created it yet.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ FAIL  test/CustomerForm.test.js
+  ● Test suite failed to run
+
+    Cannot find module '../src/CustomerForm' from 'test/CustomerForm.test.js'
+
+       7 | } from "./reactTestExtensions";
+       8 |
+    >  9 | import { CustomerForm } from "../src/CustomerForm";
+         | ^
+      10 |
+      11 | describe("CustomerForm", () => {
+      12 |     beforeEach(() => {
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (test/CustomerForm.test.js:9:1)
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       36 passed, 36 total
+Snapshots:   0 total
+Time:        1.404 s
+Ran all test suites.
+```
+

@@ -2139,3 +2139,39 @@ Exercises
 1.
 Rename Appointment.js and Appointment.test.js to AppointmentsDayView.js and AppointmentsDayView.test.js. While it’s fine to include multiple components in one file if they form a hierarchy, you should always name the file after the root component for that hierarchy.
 
+
+2.
+Complete the Appointment component by displaying the following fields on the page. You should use a table HTML element to give the data some visual structure. This shouldn’t affect how you write your tests. The fields that should be displayed are the following:
+    1. Customer last name, using the lastName field
+    2. Customer telephone number, using the phoneNumber field
+    3. Stylist name, using the stylist field
+    4. Salon service, using the service field
+    5. Appointment notes, using the notes field
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+  Appointment
+    ✓ renders the customer first name (22 ms)
+    ✓ renders another customer first name (4 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (3 ms)
+    ✓ renders an li for each appointment (6 ms)
+    ✓ renders the time of each appointment (6 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (2 ms)
+    ✓ has a button element in each li (4 ms)
+    ✓ renders another appointment when selected (10 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.032 s
+Ran all test suites.
+```

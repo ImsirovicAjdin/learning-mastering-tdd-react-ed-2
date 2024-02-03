@@ -1883,3 +1883,60 @@ Now call setSelectedAppointment from within the onClick handler on the button el
   onClick={() => setSelectedAppointment(i)}
 
 >
+
+Run your tests, and you should find they’re all green:
+PASS test/Appointment.test.js
+
+  Appointment
+
+    ✓ renders the customer first name (18ms)
+
+    ✓ renders another customer first name (2ms)
+
+  AppointmentsDayView
+
+    ✓ renders a div with the right id (7ms)
+
+    ✓ renders multiple appointments in an ol element (16ms)
+
+    ✓ renders each appointment in an li (4ms)
+
+    ✓ initially shows a message saying there are no appointments today (6ms)
+
+    ✓ selects the first element by default (2ms)
+
+    ✓ has a button element in each li (2ms)
+
+    ✓ renders another appointment when selected (3ms)
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/Appointment.test.js
+  Appointment
+    ✓ renders the customer first name (13 ms)
+    ✓ renders another customer first name (3 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (12 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (5 ms)
+    ✓ renders the time of each appointment (6 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (3 ms)
+    ✓ has a button element in each li (3 ms)
+    ✓ renders another appointment when selected (10 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.015 s
+Ran all test suites.
+```
+
+We’ve covered a lot of detail in this section, starting with specifying the initial state of the view through to adding a button element and handling its onClick event.
+
+We now have enough functionality that it makes sense to try it out and see where we’re at.

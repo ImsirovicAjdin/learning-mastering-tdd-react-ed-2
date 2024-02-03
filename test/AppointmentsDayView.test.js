@@ -5,14 +5,14 @@ import {
     Appointment,
     AppointmentsDayView,
 } from "../src/AppointmentsDayView";
+import {
+    initializeReactContainer,
+    container,
+} from "./reactTestExtensions";
 
 describe("Appointment", () => {
-
-    let container;
-
     beforeEach(() => {
-        container = document.createElement("div");
-        document.body.replaceChildren(container);
+        initializeReactContainer();
     });
 
     const render = component => act(() =>
@@ -33,7 +33,6 @@ describe("Appointment", () => {
 });
 
 describe("AppointmentsDayView", () => {
-    let container;
     const today = new Date();
     const twoAppointments = [
         { startsAt: today.setHours(12, 0), customer: { firstName: "Ashley"} },
@@ -42,8 +41,7 @@ describe("AppointmentsDayView", () => {
     ];
 
     beforeEach(() => {
-        container = document.createElement("div");
-        document.body.replaceChildren(container);
+        initializeReactContainer();
     });
     const render = (component) =>
         act(() => ReactDOM.createRoot(container).render(component)

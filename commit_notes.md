@@ -2188,4 +2188,119 @@ Hooks are a relatively recent addition to React. Traditionally, React used class
 
 https://reactjs.org/docs/hooks-overview.html.
 
+## CH 3: Refactoring the test suite
+
+At this point, you’ve written a handful of tests. Although they may seem simple enough already, they can be simpler.
+
+It’s extremely important to build a maintainable test suite: one that is quick and painless to build and adapt. One way to roughly gauge maintainability is to look at the number of lines of code in each test. To give some comparison to what you’ve seen so far, in the Ruby language, a test with more than three lines is considered a long test!
+
+This chapter will take a look at some of the ways you can make your test suite more concise. We’ll do that by extracting common code into a module that can be reused across all your test suites. We’ll also create a custom Jest matcher.
+
+WHEN IS THE RIGHT TIME TO PULL OUT REUSABLE CODE?
+
+So far, you’ve written one module with two test suites within it. It’s arguably too early to be looking for opportunities to extract duplicated code. Outside of an educational setting, you may wish to wait until the third or fourth test suite before you pounce on any duplication.
+
+The following topics will be covered in this chapter:
+
+Pulling out reusable rendering logic
+Creating a Jest matcher using TDD
+Extracting DOM helpers
+By the end of the chapter, you’ll have learned how to approach your test suite with a critical eye for maintainability.
+
+Technical requirements
+The code files for this chapter can be found here: https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter03.
+
+Pulling out reusable rendering logic
+In this section, we will extract a module that initializes a unique DOM container element for each test. Then, we’ll build a render function that uses this container element.
+
+The two test suites we’ve built both have the same beforeEach block that runs before each test:
+
+
+let container;
+beforeEach(() => {
+  container = document.createElement("div");
+  document.body.replaceChildren(container);
+});
+
+**Wouldn’t it be great if we could somehow tell Jest that any test suite that is testing a React component should always use this beforeEach block and make the container variable available to our tests?**
+
+Here, we will extract a new module that exports two things: the container variable and the initializeReactContainer function. This won’t save us any typing, but it will hide the pesky let declaration and give a descriptive name to the call to createElement.
+
+THE IMPORTANCE OF SMALL FUNCTIONS WITH DESCRIPTIVE NAMES
+
+Often, it’s helpful to pull out functions that contain just a single line of code. The benefit is that you can then give it a descriptive name that serves as a comment as to what that line of code does. This is preferable to using an actual comment because the name travels with you wherever you use the code.
+
+**In this case, the call to document.createElement could be confusing to a future maintainer of your software. Imagine that it is someone who has never done any unit testing of React code. They would be asking, “Why do the tests create a new DOM element for each and every test?” You can go some way to answer that by giving it a name, such as initializeReactContainer.**
+
+It doesn’t offer a complete answer as to why it’s necessary, but it does allude to some notion of “initialization.”
+
+Let’s go ahead and pull out this code:
+
+1.
+Create a new file called test/reactTestExtensions.js. This file will ultimately contain a whole bunch of helper methods that we’ll use in our React component tests.
+
+2.
+Add the following content to the file. The function is implicitly updating the container variable within the module. That variable is then exported – our test suites can access this variable as if it were a “read-only” constant:
+export let container;
+
+export const initializeReactContainer = () => {
+
+  container = document.createElement("div");
+
+  document.body.replaceChildren(container);
+
+}
+
+3.
+Move to test/AppointmentsDayView.test.js. Add the following import just below the existing imports:
+import {
+
+  initializeReactContainer,
+
+  container,
+
+} from "./reactTestExtensions";
+
+4.
+Now, replace the two beforeEach blocks – remember that there is one in each describe block – with the following code:
+beforeEach(() => {
+
+  initializeReactContainer();
+
+});
+
+5.
+Delete the let container definition from the top of both describe blocks.
+
+6.
+Run npm test and verify that your tests are still passing.
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+  Appointment
+    ✓ renders the customer first name (20 ms)
+    ✓ renders another customer first name (5 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (3 ms)
+    ✓ renders an li for each appointment (6 ms)
+    ✓ renders the time of each appointment (8 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (3 ms)
+    ✓ has a button element in each li (5 ms)
+    ✓ renders another appointment when selected (11 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.133 s
+Ran all test suites.
+```
+
 

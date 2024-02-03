@@ -7,17 +7,13 @@ import {
 } from "../src/AppointmentsDayView";
 import {
     initializeReactContainer,
-    container,
+    render,
 } from "./reactTestExtensions";
 
 describe("Appointment", () => {
     beforeEach(() => {
         initializeReactContainer();
     });
-
-    const render = component => act(() =>
-        ReactDOM.createRoot(container).render(component)
-    )
 
     it("renders the customer first name", () => {
         const customer = { firstName: "Ashley" };
@@ -43,9 +39,7 @@ describe("AppointmentsDayView", () => {
     beforeEach(() => {
         initializeReactContainer();
     });
-    const render = (component) =>
-        act(() => ReactDOM.createRoot(container).render(component)
-    );
+
     it("renders a div with the right id", () => {
         render(<AppointmentsDayView appointments={[]} />);
         expect(

@@ -2303,4 +2303,275 @@ Time:        1.133 s
 Ran all test suites.
 ```
 
+## Now, how about continuing with the render function?
+
+Let’s move that into our new module. This time, it’s a straight lift and replace job:
+
+1.
+Copy the definition of render from one of the describe blocks.
+
+2.
+Paste it into reactTestExtensions.js. For reference, here it is again:
+```js
+export const render = (component) =>
+
+  act(() =>
+
+    ReactDOM.createRoot(container).render(component)
+
+  );
+```
+
+3.
+You’ll also need to add these imports at the top of the file:
+
+import ReactDOM from "react-dom/client";
+
+
+import { act } from "react-dom/test-utils";
+
+4.
+Back in your test file, you can now change the test extensions import so that it includes the new render function, and then remove the container import:
+
+import {
+
+  initializeReactContainer,
+
+  render,
+
+} from "./reactTestExtensions";
+
+5.
+Delete the two render definitions from the two test suites.
+
+6.
+Run npm test and verify that your tests are still passing.
+
+**My `npm test` results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/AppointmentsDayView.test.js
+  Appointment
+    ✕ renders the customer first name (3 ms)
+    ✕ renders another customer first name (2 ms)
+  AppointmentsDayView
+    ✕ renders a div with the right id (1 ms)
+    ✕ renders an ol element to display appointments
+    ✕ renders an li for each appointment (1 ms)
+    ✕ renders the time of each appointment (1 ms)
+    ✕ initially shows a message saying there are no appointments today (1 ms)
+    ✕ selects the first appointment by default (1 ms)
+    ✕ has a button element in each li (1 ms)
+    ✕ renders another appointment when selected (1 ms)
+
+  ● Appointment › renders the customer first name
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:20:15)
+
+  ● Appointment › renders another customer first name
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:26:15)
+
+  ● AppointmentsDayView › renders a div with the right id
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:44:15)
+
+  ● AppointmentsDayView › renders an ol element to display appointments
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:52:15)
+
+  ● AppointmentsDayView › renders an li for each appointment
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:57:15)
+
+  ● AppointmentsDayView › renders the time of each appointment
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:66:15)
+
+  ● AppointmentsDayView › initially shows a message saying there are no appointments today
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:80:15)
+
+  ● AppointmentsDayView › selects the first appointment by default
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:86:15)
+
+  ● AppointmentsDayView › has a button element in each li
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:96:15)
+
+  ● AppointmentsDayView › renders another appointment when selected
+
+    TypeError: Cannot read properties of undefined (reading 'createRoot')
+
+       9 |
+      10 | export const render = component => act(() =>
+    > 11 |     ReactDOM.createRoot(container).render(component)
+         |              ^
+      12 | );
+      13 |
+
+      at createRoot (test/reactTestExtensions.js:11:14)
+      at act (node_modules/react/cjs/react.development.js:2512:16)
+      at render (test/reactTestExtensions.js:10:39)
+      at Object.<anonymous> (test/AppointmentsDayView.test.js:106:15)
+
+Test Suites: 1 failed, 1 total
+Tests:       10 failed, 10 total
+Snapshots:   0 total
+Time:        0.873 s, estimated 1 s
+Ran all test suites.
+```
+
+THE SOLUTION?
+
+Instead of this (in reactTestExtensions.js):
+```
+import { ReactDOM } from "react-dom/client";
+```
+
+Do this:
+```
+import ReactDOM from "react-dom/client";
+```
+
+Here's my `npm test` result after the above:
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+  Appointment
+    ✓ renders the customer first name (18 ms)
+    ✓ renders another customer first name (4 ms)
+  AppointmentsDayView
+    ✓ renders a div with the right id (8 ms)
+    ✓ renders an ol element to display appointments (4 ms)
+    ✓ renders an li for each appointment (6 ms)
+    ✓ renders the time of each appointment (6 ms)
+    ✓ initially shows a message saying there are no appointments today (2 ms)
+    ✓ selects the first appointment by default (3 ms)
+    ✓ has a button element in each li (4 ms)
+    ✓ renders another appointment when selected (10 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       10 passed, 10 total
+Snapshots:   0 total
+Time:        1.026 s
+Ran all test suites.
+```
 

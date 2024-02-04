@@ -3465,3 +3465,64 @@ Snapshots:   0 total
 Time:        1.335 s
 Ran all test suites.
 ```
+
+## Accepting text input
+In this section, we’ll add a text box to allow the customer’s first name to be added or edited.
+
+Adding a text field is more complicated than adding the form element. First, there’s the element itself, which has a type attribute that needs to be tested. Then, we need to prime the element with the initial value. Finally, we’ll need to add a label so that it’s obvious what the field represents.
+
+Let’s start by rendering an HTML text input field onto the page:
+
+Add the following test to test/CustomerForm.test.js. It contains three expectations (there’s an exercise at the end of this chapter that you can follow to pull these out as a single matcher):
+it("renders the first name field as a text box", () => {
+
+  render(<CustomerForm />);
+
+  const field = form().elements.firstName;
+
+  expect(field).not.toBeNull();
+
+  expect(field.tagName).toEqual("INPUT");
+
+  expect(field.type).toEqual("text");
+
+});
+
+RELYING ON THE DOM’S FORM API
+
+This test makes use of the Form API: any form element allows you to access all of its input elements using the elements indexer. You give it the element’s name attribute (in this case, firstName) and that element is returned.
+
+This means we must check the returned element’s tag. We want to make sure it is an <input> element. If we hadn’t used the Form API, one alternative would have been to use elements("input")[0], which returns the first input element on the page. This would make the expectation on the element’s tagName property unnecessary.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › renders the first name field as a text box
+
+    TypeError: Cannot read properties of undefined (reading 'tagName')
+
+      22 |         const field = form().elements.firstName;
+      23 |         expect(field).not.toBeNull();
+    > 24 |         expect(field.tagName).toEqual("INPUT");
+         |                      ^
+      25 |         expect(field.type).toEqual("text");
+      26 |     });
+      27 | });
+
+      at Object.tagName (test/CustomerForm.test.js:24:22)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 37 passed, 38 total
+Snapshots:   0 total
+Time:        1.398 s
+Ran all test suites.
+```

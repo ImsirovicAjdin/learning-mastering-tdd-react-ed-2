@@ -3526,3 +3526,33 @@ Snapshots:   0 total
 Time:        1.398 s
 Ran all test suites.
 ```
+
+## Let’s move a bit faster. We’ll make all the expectations pass at once. Update CustomerForm so that it includes a single input field, as shown here:
+export const CustomerForm = () => (
+
+  <form
+
+    <input type="text" name="firstName" />
+
+  </form>
+
+);
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       38 passed, 38 total
+Snapshots:   0 total
+Time:        1.371 s
+Ran all test suites.
+```

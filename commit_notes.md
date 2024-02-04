@@ -3556,3 +3556,52 @@ Snapshots:   0 total
 Time:        1.371 s
 Ran all test suites.
 ```
+
+## Since this form will be used when modifying existing customers as well as adding new ones, we need to design a way to get the existing customer data into the component. We’ll do that by setting an original prop that contains the form data. Add the following test:
+it("includes the existing value for the first name", () => {
+
+  const customer = { firstName: "Ashley" };
+
+  render(<CustomerForm original={customer} />);
+
+  const field = form().elements.firstName;
+
+  expect(field.value).toEqual("Ashley");
+
+});
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › includes the existing value for the first name
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: "Ashley"
+    Received: ""
+
+      29 |         render(<CustomerForm original={customer} />);
+      30 |         const field = form().elements.firstName;
+    > 31 |         expect(field.value).toEqual("Ashley");
+         |                             ^
+      32 |     });
+      33 | });
+      34 |
+
+      at Object.toEqual (test/CustomerForm.test.js:31:29)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 38 passed, 39 total
+Snapshots:   0 total
+Time:        1.355 s
+Ran all test suites.
+```

@@ -5,6 +5,7 @@ export const CustomerForm = ({ original }) => (
             type="text"
             name="firstName"
             value={original ? original.firstName : ""}
+            readOnly
         />
     </form>
 );

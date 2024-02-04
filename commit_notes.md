@@ -3782,3 +3782,39 @@ It all works, except for:
       14 |   );
       15 |
 ```
+
+## To get rid of the warning, add the word readOnly to the input tag. You might be thinking: surely, we don’t want a read-only field? You’re right, but we need a further test, for modifying the input value, before we can avoid using the readOnly keyword. We’ll add that test a little further on:
+<input
+
+  type="text"
+
+  name="firstName"
+
+  value={original.firstName}
+
+  readOnly
+
+/>
+
+TIP
+
+Always consider React warnings to be a test failure. Don’t proceed without first fixing any warnings.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       39 passed, 39 total
+Snapshots:   0 total
+Time:        1.34 s
+Ran all test suites.
+```

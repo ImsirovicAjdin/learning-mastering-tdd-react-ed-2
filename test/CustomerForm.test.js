@@ -9,16 +9,19 @@ import {
 import { CustomerForm } from "../src/CustomerForm";
 
 describe("CustomerForm", () => {
+    const blankCustomer = {
+        firstName: "",
+    };
     beforeEach(() => {
         initializeReactContainer();
     });
     it("renders a form", () => {
-        render(<CustomerForm />);
+        render(<CustomerForm original={blankCustomer} />);
         // expect(element("form")).not.toBeNull();
         expect(form()).not.toBeNull();
     });
     it("renders the first name field as a text box", () => {
-        render(<CustomerForm />);
+        render(<CustomerForm original={blankCustomer} />);
         const field = form().elements.firstName;
         expect(field).not.toBeNull();
         expect(field.tagName).toEqual("INPUT");

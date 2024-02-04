@@ -4,7 +4,7 @@ export const CustomerForm = ({ original }) => (
         <input
             type="text"
             name="firstName"
-            value={original.firstName}
+            value={original ? original.firstName : ""}
         />
     </form>
 );

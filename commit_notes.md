@@ -3654,3 +3654,131 @@ export const CustomerForm = ({ original }) => (
       10 | );
 ...
 ```
+
+## ChatGPT
+
+The error you are encountering is due to trying to access the 'firstName' property of 'original' when 'original' is undefined. To fix this issue, you should provide a default value for 'original' or check if it exists before accessing its properties.
+
+You can modify your `CustomerForm` component to handle the case where 'original' is undefined. Here's an example:
+
+```jsx
+import React from "react";
+
+export const CustomerForm = ({ original }) => (
+    <form>
+        <input
+            type="text"
+            name="firstName"
+            value={original ? original.firstName : ""}
+        />
+    </form>
+);
+```
+
+In this modification, I added a check for the existence of 'original' before trying to access its 'firstName' property. If 'original' is undefined, an empty string is used as the default value for the input field. This should prevent the TypeError you were encountering.
+
+**My `npm test` result after the above:**
+```
+...
+
+    console.error
+      Warning: You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+          at input
+          at form
+          at original (/home/pc/Desktop/temp-tdd-whatever/mastering-react-tdd/my-mastering-tdd/src/CustomerForm.js:2:32)
+
+      10 |
+      11 | export const render = (component) =>
+    > 12 |   act(() =>
+         |      ^
+      13 |     ReactDOM.createRoot(container).render(component)
+      14 |   );
+      15 |
+
+      at printWarning (node_modules/react-dom/cjs/react-dom.development.js:86:30)
+      at error (node_modules/react-dom/cjs/react-dom.development.js:60:7)
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom.development.js:1592:7)
+      at initWrapperState (node_modules/react-dom/cjs/react-dom.development.js:1775:5)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom.development.js:9888:7)
+      at finalizeInitialChildren (node_modules/react-dom/cjs/react-dom.development.js:10950:3)
+      at completeWork (node_modules/react-dom/cjs/react-dom.development.js:22193:17)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26593:16)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26568:5)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26466:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26434:7)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25738:74)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at render (test/reactTestExtensions.js:12:6)
+      at Object.<anonymous> (test/CustomerForm.test.js:29:15)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       39 passed, 39 total
+Snapshots:   0 total
+Time:        1.326 s
+Ran all test suites.
+```
+
+There is more above...
+
+So, instead, following the book...
+
+Upon running the tests again, you’ll see that although this test now passes, the first two tests fail because they don’t specify the original prop. What’s more, we have a warning:
+Warning: You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+To fix the initial tests, create a new constant, blankCustomer, that will act as our “base” customer. It’ll do just fine for tests that don’t care about specific field values, such as our first two tests. Add this definition just above the beforeEach block:
+const blankCustomer = {
+
+  firstName: "",
+
+};
+
+WHAT ABOUT SPECIFYING AN EMPTY OBJECT FOR THE ORIGINAL PROP?
+
+In this object definition, we set the firstName value to an empty string. You may think that either undefined or null would be good candidates for the value. That way, we could sidestep having to define an object like this and just pass an empty object, {}. Unfortunately, React will warn you when you attempt to set a controlled component’s initial value to undefined, which we want to avoid. It’s no big deal, and besides that, an empty string is a more realistic default for a text box.
+
+Update the first two tests so that they render with the original prop set, as shown here. With this change in place, you should have three passing tests, but the warning remains:
+it("renders a form", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  expect(form()).not.toBeNull();
+
+});
+
+it("renders the first name field as a text box", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  const field = form().elements.firstName;
+
+  expect(field).not.toBeNull();
+
+  expect(field.tagName).toEqual("INPUT");
+
+  expect(field.type).toEqual("text");
+
+});
+
+**My `npm test` result after the above:**
+
+It all works, except for:
+```
+    console.error
+      Warning: You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+          at input
+          at form
+          at original (/home/pc/Desktop/temp-tdd-whatever/mastering-react-tdd/my-mastering-tdd/src/CustomerForm.js:2:32)
+
+      10 |
+      11 | export const render = (component) =>
+    > 12 |   act(() =>
+         |      ^
+      13 |     ReactDOM.createRoot(container).render(component)
+      14 |   );
+      15 |
+```

@@ -3605,3 +3605,52 @@ Snapshots:   0 total
 Time:        1.355 s
 Ran all test suites.
 ```
+
+## To make this test pass, change the component definition to the following. We will use a prop to pass in the previous firstName value:
+export const CustomerForm = ({ original }) => (
+
+  <form
+
+    <input
+
+      type="text"
+
+      name="firstName"
+
+      value={original.firstName} />
+
+  </form>
+
+);
+
+**My `npm test` result after the above:**
+```
+...
+    console.error
+      Warning: You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+          at input
+          at form
+          at original (/home/pc/Desktop/temp-tdd-whatever/mastering-react-tdd/my-mastering-tdd/src/CustomerForm.js:2:32)
+
+      10 |
+      11 | export const render = (component) =>
+    > 12 |   act(() =>
+         |      ^
+      13 |     ReactDOM.createRoot(container).render(component)
+      14 |   );
+      15 |
+...
+
+  ● CustomerForm › renders the first name field as a text box
+
+    TypeError: Cannot read properties of undefined (reading 'firstName')
+
+       5 |             type="text"
+       6 |             name="firstName"
+    >  7 |             value={original.firstName}
+         |                             ^
+       8 |         />
+       9 |     </form>
+      10 | );
+...
+```

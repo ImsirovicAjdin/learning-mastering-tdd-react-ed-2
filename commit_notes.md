@@ -4085,4 +4085,95 @@ Time:        1.502 s
 Ran all test suites.
 ```
 
+## Making that pass is as simple as adding the new attribute:
+<form>
+
+  <label htmlFor="firstName">First name</label>
+
+  <input
+
+    type="text"
+
+    name="firstName"
+
+    id="firstName"
+
+    value={firstName}
+
+    readOnly
+
+  />
+
+</form>
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       42 passed, 42 total
+Snapshots:   0 total
+Time:        1.311 s
+Ran all test suites.
+```
+
+## INTERMISSION
+
+lain this:
+npm test -- --coverage
+
+> my-mastering-tdd@1.0.0 test
+> jest --coverage
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+-------------------------|---------|----------|---------|---------|-------------------
+File                     | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------------|---------|----------|---------|---------|-------------------
+All files                |     100 |     87.5 |     100 |     100 | 
+ src                     |     100 |    83.33 |     100 |     100 | 
+  AppointmentsDayView.js |     100 |      100 |     100 |     100 | 
+  CustomerForm.js        |     100 |       50 |     100 |     100 | 9 
+ test                    |     100 |      100 |     100 |     100 | 
+  reactTestExtensions.js |     100 |      100 |     100 |     100 | 
+ test/matchers           |     100 |      100 |     100 |     100 | 
+  toContainText.js       |     100 |      100 |     100 |     100 | 
+  toHaveClass.js         |     100 |      100 |     100 |     100 | 
+-------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 4 passed, 4 total
+Tests:       42 passed, 42 total
+Snapshots:   0 total
+Time:        1.645 s
+Ran all test suites.
+
+The command `npm test -- --coverage` is a way to pass arguments directly to the underlying test script defined in your `package.json` file when using `npm`. Here, `--coverage` is the argument being passed to the Jest command that is presumably defined under the `test` script in your `package.json`.
+
+When you run `npm test -- --coverage`, it essentially instructs Jest to run your tests and also collect coverage information across your project. This is what the output represents:
+
+1. **`> my-mastering-tdd@1.0.0 test`**: This line indicates the beginning of the test script execution for your project named `my-mastering-tdd` with version `1.0.0`. The script being executed is `jest --coverage`.
+
+2. **The `PASS` lines**: These lines list each test file that was run and indicate that all tests within those files passed successfully.
+
+3. **Coverage Summary**:
+   - **File**: Lists the files for which coverage was collected.
+   - **% Stmts**: Shows the percentage of statements in your code that were executed while running the tests. This indicates how much of your codebase is covered by tests.
+   - **% Branch**: Shows the percentage of branches (e.g., `if` statements) that were executed. This is important for conditional logic in your code.
+   - **% Funcs**: Indicates the percentage of functions or methods that were called during the test execution.
+   - **% Lines**: Represents the percentage of lines of code that were executed, which is similar to % Stmts but focuses on lines.
+   - **Uncovered Line #s**: Lists line numbers in your code that were not executed during testing, pointing out parts of your code that lack test coverage.
+
+The report shows that while most of your project has 100% test coverage across statements, functions, and lines of code, the `CustomerForm.js` file has only 50% branch coverage. This suggests that half of the conditional logic (branches) in `CustomerForm.js` was not executed during tests, specifically around line 9. This might indicate missing test cases for certain conditions within that file.
+
+The summary provides a clear picture of the test coverage and highlights areas that might need additional tests to ensure your code behaves as expected under various conditions. The goal of such coverage metrics is to help maintain high-quality, reliable code by identifying untested paths and ensuring that changes do not inadvertently break existing functionality.
 

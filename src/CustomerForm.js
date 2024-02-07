@@ -5,6 +5,7 @@ export const CustomerForm = ({ original }) => (
         <input
             type="text"
             name="firstName"
+            id="firstName"
             value={original ? original.firstName : ""}
             readOnly
         />

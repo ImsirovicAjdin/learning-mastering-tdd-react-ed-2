@@ -4011,3 +4011,34 @@ Snapshots:   0 total
 Time:        1.278 s
 Ran all test suites.
 ```
+
+## Update the label element to make the test pass:
+<form
+
+  <label htmlFor="firstName">First name</label>
+
+  ...
+
+</form>
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       41 passed, 41 total
+Snapshots:   0 total
+Time:        1.253 s
+Ran all test suites.
+```
+
+
+

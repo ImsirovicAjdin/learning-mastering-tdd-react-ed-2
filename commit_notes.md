@@ -3818,3 +3818,135 @@ Snapshots:   0 total
 Time:        1.34 s
 Ran all test suites.
 ```
+
+## The last two tests include the following line, which reaches inside the form to pull out the firstName field:
+```
+const field = form().elements.firstName;
+```
+
+Let’s promote this to be a function in test/reactTestExtensions.js. Open that file and add the following definition after the definition for form:
+```
+export const field = (fieldName) =>
+
+  form().elements[fieldName];
+```
+
+Then, import it into test/CustomerForm.test.js:
+```
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  element,
+
+  form,
+
+  field,
+
+} from "./reactTestExtensions";
+```
+
+Change the last test you wrote so that it uses the new helper:
+```
+it("includes the existing value for the first name", () => {
+
+  const customer = { firstName: "Ashley" };
+
+  render(<CustomerForm original={customer} />);
+
+  expect(field("firstName").value).toEqual("Ashley");
+
+});
+```
+
+Update the first test in the same way:
+```
+it("renders the first name field as a text box", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  expect(field("firstName")).not.toBeNull();
+
+  expect(field("firstName")).toEqual("INPUT");
+
+  expect(field("firstName")).toEqual("text");
+
+});
+```
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › renders the first name field as a text box
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: "INPUT"
+    Received: <input name="firstName" readonly="" type="text" value="" />
+
+      25 |         render(<CustomerForm original={blankCustomer} />);
+      26 |         expect(field("firstName")).not.toBeNull();
+    > 27 |         expect(field("firstName")).toEqual("INPUT");
+         |                                    ^
+      28 |         expect(field("firstName")).toEqual("text");
+      29 |     });
+      30 |     it("includes the existing value for the first name", () => {
+
+      at Object.toEqual (test/CustomerForm.test.js:27:36)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 38 passed, 39 total
+Snapshots:   0 total
+Time:        1.442 s
+Ran all test suites.
+pc@pclaptop:~/Desktop/temp-tdd-whatever/mastering-react-tdd/my-mastering-tdd$ npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       39 passed, 39 total
+Snapshots:   0 total
+Time:        1.348 s
+Ran all test suites.
+```
+
+Explanation from GPT:
+
+The test failure you're seeing in the "CustomerForm › renders the first name field as a text box" test case is due to incorrect expectations set in your assertions. Specifically, the line `expect(field("firstName")).toEqual("INPUT");` and `expect(field("firstName")).toEqual("text");` are not correctly validating the input element and its type. The `field` function seems to return a DOM element, and you're trying to compare this element directly to string values, which will not work as expected.
+
+Here's how you can correct the test:
+
+1. **Check if the field is an input element:** You need to check if the returned element is an input element. Instead of comparing it to `"INPUT"`, you should check the element's tag name.
+
+2. **Check the type of the input:** To check if the input type is "text", you need to access the `type` property of the input element returned by `field("firstName")`.
+
+Here is an updated version of the test that addresses these issues:
+
+```javascript
+it("renders the first name field as a text box", () => {
+    render(<CustomerForm original={blankCustomer} />);
+    const firstNameField = field("firstName");
+    expect(firstNameField).not.toBeNull();
+    expect(firstNameField.tagName).toEqual("INPUT"); // Check if the element is an input
+    expect(firstNameField.type).toEqual("text"); // Check if the input type is "text"
+});
+```
+
+This change adjusts the test to properly check the attributes of the `firstName` field. Make sure that your `field` function is correctly implemented to return the actual DOM element for the input field so that you can access its `tagName` and `type` properties. If `field` does not return a DOM element but some form of object representation, you would need to adjust your approach to access these properties correctly.

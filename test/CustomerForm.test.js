@@ -4,6 +4,7 @@ import {
     render,
     element,
     form,
+    field,
 } from "./reactTestExtensions";
 
 import { CustomerForm } from "../src/CustomerForm";
@@ -22,15 +23,14 @@ describe("CustomerForm", () => {
     });
     it("renders the first name field as a text box", () => {
         render(<CustomerForm original={blankCustomer} />);
-        const field = form().elements.firstName;
-        expect(field).not.toBeNull();
-        expect(field.tagName).toEqual("INPUT");
-        expect(field.type).toEqual("text");
+        const firstNameField = field("firstName");
+        expect(firstNameField).not.toBeNull();
+        expect(firstNameField.tagName).toEqual("INPUT"); // Check if the element is an input
+        expect(firstNameField.type).toEqual("text"); // Check if the input type is "text"
     });
     it("includes the existing value for the first name", () => {
         const customer = { firstName: "Ashley" };
         render(<CustomerForm original={customer} />);
-        const field = form().elements.firstName;
-        expect(field.value).toEqual("Ashley");
+        expect(field("firstName").value).toEqual("Ashley");
     });
 });

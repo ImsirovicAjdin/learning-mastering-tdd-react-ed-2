@@ -3950,3 +3950,14 @@ it("renders the first name field as a text box", () => {
 ```
 
 This change adjusts the test to properly check the attributes of the `firstName` field. Make sure that your `field` function is correctly implemented to return the actual DOM element for the input field so that you can access its `tagName` and `type` properties. If `field` does not return a DOM element but some form of object representation, you would need to adjust your approach to access these properties correctly.
+
+## Next up, we’ll add a label to the field. Add the following test, which uses the element helper:
+it("renders a label for the first name field", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  const label = element("label[for=firstName]");
+
+  expect(label).not.toBeNull();
+
+});

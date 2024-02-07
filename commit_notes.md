@@ -4040,5 +4040,49 @@ Time:        1.253 s
 Ran all test suites.
 ```
 
+## Finally, we need to ensure that our input has an ID that matches it with the label’s htmlFor value so that they match up. Add the following test:
+it("assigns an id that matches the label id to the first name field", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  expect(field("firstName").id).toEqual("firstName");
+
+});
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › assigns an id that matches the label id to the first name field
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: "firstName"
+    Received: ""
+
+      46 |     it("assigns an id that matches the label id to the first name field", () => {
+      47 |         render(<CustomerForm original={blankCustomer} />);
+    > 48 |         expect(field("firstName").id).toEqual("firstName");
+         |                                       ^
+      49 |     })
+      50 | });
+      51 |
+
+      at Object.toEqual (test/CustomerForm.test.js:48:39)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 41 passed, 42 total
+Snapshots:   0 total
+Time:        1.502 s
+Ran all test suites.
+```
 
 

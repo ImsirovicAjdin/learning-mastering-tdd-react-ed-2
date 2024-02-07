@@ -3961,3 +3961,53 @@ it("renders a label for the first name field", () => {
   expect(label).not.toBeNull();
 
 });
+
+## THE HTMLFOR ATTRIBUTE
+
+The JSX htmlFor attribute sets the HTML for attribute. for couldn’t be used in JSX because it is a reserved JavaScript keyword. The attribute is used to signify that the label matches a form element with the given ID – in this case, firstName.
+
+Let’s add some text content to that label:
+it("renders 'First name' as the first name label content", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  const label = element("label[for=firstName]");
+
+  expect(label).toContainText("First name");
+
+});
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › renders 'First name' as the first name label content
+
+    expect(element).toContainText("First name")
+
+    Actual text: ""
+
+      42 |         render(<CustomerForm original={blankCustomer} />);
+      43 |         const label = element("label[for=firstName]");
+    > 44 |         expect(label).toContainText("First name");
+         |                       ^
+      45 |     });
+      46 | });
+      47 |
+
+      at Object.toContainText (test/CustomerForm.test.js:44:23)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 40 passed, 41 total
+Snapshots:   0 total
+Time:        1.278 s
+Ran all test suites.
+```

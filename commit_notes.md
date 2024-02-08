@@ -5075,3 +5075,219 @@ itRendersAsATextBox("firstName");
 
 Again, verify that your tests are passing.
 Push the itRendersAsATextBox function up one level, into the parent describe scope. That will allow you to use it in subsequent describe blocks.
+
+Use the same procedure for the next test, includes the existing value:
+const itIncludesTheExistingValue = (
+
+  fieldName,
+
+  existing
+
+) =>
+
+  it("includes the existing value", () => {
+
+    const customer = { [fieldName]: existing };
+
+    render(<CustomerForm original={customer} />);
+
+    expect(field(fieldName).value).toEqual(existing);
+
+  });
+
+itIncludesTheExistingValue("firstName", "Ashley");
+
+Verify your tests are passing and then push itIncludesTheExistingValue up one level, into the parent describe scope.
+Repeat this process for the label tests, which can be included in one function. The second test can use a parameter within its test definition, as shown here:
+const itRendersALabel = (fieldName, text) => {
+
+  it("renders a label for the text box", () => {
+
+    render(<CustomerForm original={blankCustomer} />);
+
+    const label = element(`label[for=${fieldName}]`);
+
+    expect(label).not.toBeNull();
+
+  });
+
+  it(`renders '${text}' as the label content`, () => {
+
+    render(<CustomerForm original={blankCustomer} />);
+
+    const label = element(`label[for=${fieldName}]`);
+
+    expect(label).toContainText(text);
+
+  });
+
+};
+
+Repeat the same process for the three remaining tests:
+const itAssignsAnIdThatMatchesTheLabelId = (
+
+  fieldName
+
+) =>
+
+   ...
+
+const itSubmitsExistingValue = (fieldName, value) =>
+
+   ...
+
+const itSubmitsNewValue = (fieldName, value) =>
+
+   ...
+
+IMPORTANT NOTE
+
+Check the completed solution for the full listing. This can be found in the Chapter04/Complete directory.
+
+With all that done, your describe block will succinctly describe what the first name field does:
+describe("first name field", () => {
+
+  itRendersAsATextBox("firstName");
+
+  itIncludesTheExistingValue("firstName", "Ashley");
+
+  itRendersALabel("firstName", "First name");
+
+  itAssignsAnIdThatMatchesTheLabelId("firstName");
+
+  itSubmitsExistingValue("firstName", "Ashley");
+
+  itSubmitsNewValue("firstName", "Jamie");
+
+});
+
+Take a step back and look at the new form of the describe block. It is now very quick to understand the specification for how this field should work.
+
+Solving a batch of tests
+Now, we want to duplicate those six tests for the last name field. But how do we approach this? We do this test by test, just as we did with the first name field. However, this time, we should go much faster as our tests are one-liners, and the production code is a copy and paste job.
+
+So, for example, the first test will be this:
+
+
+describe("last name field", () => {
+  itRendersAsATextBox("lastName");
+});
+You’ll need to update blankCustomer so that it includes the new field:
+
+
+const blankCustomer = {
+  firstName: "",
+  lastName: "",
+};
+That test can be made to pass by adding the following line to our JSX, just below the firstName input field:
+
+
+<input type="text" name="lastName" />
+This is just the start for the input field; you’ll need to complete it as you add the next few tests.
+
+Go ahead and add the remaining five tests, along with their implementation. Then, repeat this process for the phone number field. When adding the submit tests for the phone number, make sure that you provide a string value made up of numbers, such as "012345". Later in this book, we’ll add validations to this field that will fail if you don’t use the right values now.
+
+JUMPING AHEAD
+
+You might be tempted to try to solve all 12 new tests at once. If you’re feeling confident, go for it!
+
+If you want to see a listing of all the tests in a file, you must invoke Jest with a single file. Run the npm test test/CustomerForm.test.js command to see what that looks like. Alternatively, you can run npx jest --verbose to run all the tests with full test listings:
+
+
+PASS test/CustomerForm.test.js
+  CustomerForm
+    ✓ renders a form (28ms)
+    first name field
+      ✓ renders as a text box (4ms)
+      ✓ includes the existing value (3ms)
+      ✓ renders a label (2ms)
+      ✓ saves existing value when submitted (4ms)
+      ✓ saves new value when submitted (5ms)
+    last name field
+      ✓ renders as a text box (3ms)
+      ✓ includes the existing value (2ms)
+      ✓ renders a label (6ms)
+      ✓ saves existing value when submitted (2ms)
+      ✓ saves new value when submitted (3ms)
+    phone number field
+      ✓ renders as a text box (2ms)
+      ✓ includes the existing value (2ms)
+      ✓ renders a label (2ms)
+      ✓ saves existing value when submitted (3ms)
+      ✓ saves new value when submitted (2ms)
+Modifying handleChange so that it works with multiple fields
+Time for a small refactor. After adding all three fields, you will have ended up with three very similar onChange event handlers:
+
+
+const handleChangeFirstName = ({ target }) =>
+  setCustomer((customer) => ({
+    ...customer,
+    firstName: target.value
+  }));
+const handleChangeLastName = ({ target }) =>
+  setCustomer((customer) => ({
+    ...customer,
+    lastName: target.value
+  }));
+const handleChangePhoneNumber = ({ target }) =>
+  setCustomer((customer) => ({
+    ...customer,
+    phoneNumber: target.value
+  }));
+You can simplify these down into one function by making use of the name property on target, which matches the field ID:
+
+
+const handleChange = ({ target }) =>
+  setCustomer(customer => ({
+    ...customer,
+   [target.name]: target.value
+  }));
+Testing it out
+At this stage, your the AppointmentsDayView instance is complete. Now is a good time to try it out for real.
+
+Update your entry point in src/index.js so that it renders a new CustomerForm instance, rather than AppointmentsDayView. By doing so, you should be ready to manually test:
+
+Figure_4.01_B18423.jpg
+Figure 4.1 – The completed CustomerForm
+
+With that, you have learned one way to quickly duplicate specifications across multiple form fields: since describe and it are plain old functions, you can treat them just like you would with any other function and build your own structure around them.
+
+Summary
+In this chapter, you learned how to create an HTML form with text boxes. You wrote tests for the form element, and for input elements of types text and submit.
+
+Although the text box is about the most basic input element there is, we’ve taken this opportunity to dig much deeper into test-driven React. We’ve discovered the intricacies of raising submit and change events via JSDOM, such as ensuring that event.preventDefault() is called on the event to avoid a browser page transition.
+
+We’ve also gone much further with Jest. We extracted common test logic into modules, used nested describe blocks, and built assertions using DOM’s Form API.
+
+In the next chapter, we’ll test-drive a more complicated form example: a form with select boxes and radio buttons.
+
+Exercises
+The following are some exercises for you to try out:
+
+Extract a labelFor helper into test/reactTestExtensions.js. It should be used like so:
+expect(labelFor(fieldName)).not.toBeNull();
+
+Add a toBeInputFieldOfType matcher that replaces the three expectations in the itRendersAsATextBox function. It should be used like so:
+expect(field(fieldName)).toBeInputFieldOfType("text");
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 5 passed, 5 total
+Tests:       69 passed, 69 total
+Snapshots:   0 total
+Time:        1.436 s
+Ran all test suites.
+```
+
+

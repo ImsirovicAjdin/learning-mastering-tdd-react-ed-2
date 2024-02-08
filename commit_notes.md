@@ -4791,3 +4791,240 @@ Snapshots:   0 total
 Time:        1.47 s
 Ran all test suites.
 ```
+
+## This function uses the new change helper that was discussed at the beginning of this section. Add the following definitions to test/reactTestExtensions.js:
+const originalValueProperty = (reactElement) => {
+
+  const prototype =
+
+    Object.getPrototypeOf(reactElement);
+
+  return Object.getOwnPropertyDescriptor(
+
+    prototype,
+
+    "value"
+
+  );
+
+};
+
+export const change = (target, value) => {
+
+  originalValueProperty(target).set.call(
+
+    target,
+
+    value
+
+  );
+
+  const event = new Event("change", {
+
+    target,
+
+    bubbles: true,
+
+  });
+
+  act(() => target.dispatchEvent(event));
+
+};
+
+FIGURING OUT INTERACTIONS BETWEEN REACT AND JSDOM
+
+The implementation of the change function shown here is not obvious. As we saw earlier with the bubbles property, React does some pretty clever stuff on top of the DOM’s usual event system.
+
+It helps to have a high-level awareness of how React works. I also find it helpful to use the Node debugger to step through JSDOM and React source code to figure out where the flow is breaking.
+
+To make this pass, move to src/CustomerForm.js and import useState into the module by modifying the existing React import:
+import React, { useState } from "react";
+
+Change the customer constant definition to be assigned via a call to useState. The default state is the original value of customer:
+const [ customer, setCustomer ] = useState(original);
+
+Create a new arrow function that will act as our event handler. You can put this just after the useState line that you added in the previous step:
+const handleChangeFirstName = ({ target }) =>
+
+  setCustomer((customer) => ({
+
+    ...customer,
+
+    firstName: target.value
+
+  }));
+
+In the returned JSX, modify the input element, as shown here. We are replacing the readOnly property with an onChange property and hooking it up to the handler we just created. Now, the value property also needs to be updated so that it can use React’s component state rather than the component prop:
+<input
+
+  type="text"
+
+  name="firstName"
+
+  id="firstName"
+
+  value={customer.firstName}
+
+  onChange={handleChangeFirstName}
+
+/>
+
+Go ahead and run the test; it should now be passing.
+
+With that, you’ve learned how to test-drive the change DOM event, and how to hook it up with React’s component state to save the user’s input. Next, it’s time to repeat the process for two more text boxes.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › saves new first name when submitted
+
+    expect.hasAssertions()
+
+    Expected at least one assertion to be called but received none.
+
+      82 |     });
+      83 |     it("saves new first name when submitted", () => {
+    > 84 |         expect.hasAssertions();
+         |                ^
+      85 |         render(
+      86 |             <CustomerForm
+      87 |                 original={blankCustomer}
+
+      at Object.hasAssertions (test/CustomerForm.test.js:84:16)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 45 passed, 46 total
+Snapshots:   0 total
+Time:        1.701 s
+Ran all test suites.
+```
+
+### // CHATGPT PROMPT START
+
+The failure in your test suite, specifically in the "CustomerForm › saves new first name when submitted" test, indicates that no assertions were called. This usually happens when the test completes without reaching any `expect` statements. In this case, it's likely because the test setup does not trigger any action that would lead to the `onSubmit` prop being called with the expected data.
+
+To fix this issue, you need to ensure that:
+1. The form is submitted in a way that triggers the `handleSubmit` function.
+2. The `handleSubmit` function actually uses the current state of the `customer`, not the `original` prop, when calling `onSubmit`.
+
+Let's address these points:
+
+### 1. Triggering Form Submission Correctly
+
+Your test setup for "saves new first name when submitted" lacks interaction with the form to actually change the `firstName` and then submit the form. You should simulate changing the `firstName` input and then submitting the form:
+
+```javascript
+it("saves new first name when submitted", () => {
+    const onSubmitMock = jest.fn();
+    render(
+        <CustomerForm
+            original={blankCustomer}
+            onSubmit={onSubmitMock}
+        />
+    );
+
+    change(field("firstName"), "Jamie");
+    const formElement = form();
+    submit(formElement);
+
+    expect(onSubmitMock).toHaveBeenCalledWith(expect.objectContaining({
+        firstName: "Jamie"
+    }));
+});
+```
+
+This test changes the value of the `firstName` field to "Jamie" and then submits the form. It expects the `onSubmit` mock to have been called with an object containing the updated `firstName`.
+
+### 2. Correctly Using the Updated State in `handleSubmit`
+
+In your `CustomerForm` component's `handleSubmit` function, you're passing the `original` prop to the `onSubmit` function, which is incorrect for capturing updated form data. Instead, you should pass the updated `customer` state:
+
+```javascript
+const handleSubmit = event => {
+    event.preventDefault();
+    onSubmit(customer); // Use the updated customer state
+};
+```
+
+This change ensures that when the form is submitted, it passes the current state of the form (which reflects any user changes) to the `onSubmit` prop function.
+
+### Summary
+
+- Ensure the form submission in your tests correctly simulates user actions: changing form fields and submitting the form.
+- Update the `handleSubmit` function in your `CustomerForm` component to use the updated form state, ensuring the correct data is passed to your `onSubmit` prop.
+
+These changes should address the test failure and ensure your component behaves as expected, capturing and submitting new user input correctly.
+
+### // CHATGPT PROMPT END
+
+# This commit was problematic so I had to simplify it.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       46 passed, 46 total
+Snapshots:   0 total
+Time:        1.523 s
+Ran all test suites.
+```
+
+## Duplicating tests for multiple form fields
+So far, we’ve written a set of tests that fully define the firstName text field. Now, we want to add two more fields, which are essentially the same as the firstName field but with different id values and labels.
+
+Before you reach for copy and paste, stop and think about the duplication you could be about to add to both your tests and your production code. We have six tests that define the first name. This means we would end up with 18 tests to define three fields. That’s a lot of tests without any kind of grouping or abstraction.
+
+So, let’s do both – that is, group our tests and abstract out **a function that generates our tests for us**.
+
+Nesting describe blocks
+
+We can nest describe blocks to break similar tests up into logical contexts. We can invent a convention for how to name these describe blocks. Whereas the top level is named after the form itself, the second-level describe blocks are named after the form fields.
+
+Here’s how we’d like them to end up:
+
+
+describe("CustomerForm", () => {
+  describe("first name field", () => {
+    // ... tests ...
+  };
+  describe("last name field", () => {
+    // ... tests ...
+  };
+  describe("phone number field", () => {
+    // ... tests ...
+  };
+});
+With this structure in place, you can simplify the it descriptive text by removing the name of the field. For example, "renders the first name field as a text box" becomes "renders as a text box" because it has already been scoped by the "first name field" describe block. Because of the way Jest displays describe block names before test names in the test output, each of these still reads like a plain-English sentence, but without the verbiage. In the example just given, Jest will show us `CustomerForm first name field renders as a text box`.
+
+Let’s do that now for the first name field. Wrap the six existing tests in a describe block, and then rename the tests, as shown here:
+
+
+describe("first name field", () => {
+  it("renders as a text box" ... );
+  it("includes the existing value" ... );
+  it("renders a label" ... );
+  it("assigns an id that matches the label id" ... );
+  it("saves existing value when submitted" ... );
+  it("saves new value when submitted" ... );
+});
+Be careful not to include the preventsDefault test out of this, as it’s not field-specific. You may need to adjust the positioning of your tests in your test file.
+
+That covers grouping the tests. Now, let’s look at using test generator functions to remove repetition.

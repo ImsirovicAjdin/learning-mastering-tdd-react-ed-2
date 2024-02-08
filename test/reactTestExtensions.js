@@ -44,3 +44,23 @@ export const submit = (formElement) => {
 export const submitButton = () => {
   element("input[type=submit]");
 };
+
+const originalValueProperty = (reactElement) => {
+  const prototype = Object.getPrototypeOf(reactElement);
+  return Object.getOwnPropertyDescriptor(
+    prototype,
+    "value"
+  );
+};
+
+export const change = (target, value) => {
+  originalValueProperty(target).set.call(
+    target,
+    value
+  );
+  const event = new Event("change", {
+    target,
+    bubbles: true,
+  });
+  act(() => target.dispatchEvent(event));
+};

@@ -21,6 +21,7 @@ describe("CustomerForm", () => {
         initializeReactContainer();
     });
     describe("first name field", () => {
+        const itRendersAsATextBox = () => {};
         it("renders as a text box", () => {
             render(<CustomerForm original={blankCustomer} />);
             const firstNameField = field("firstName");

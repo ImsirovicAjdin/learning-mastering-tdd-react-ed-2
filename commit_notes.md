@@ -5028,3 +5028,29 @@ describe("first name field", () => {
 Be careful not to include the preventsDefault test out of this, as it’s not field-specific. You may need to adjust the positioning of your tests in your test file.
 
 That covers grouping the tests. Now, let’s look at using test generator functions to remove repetition.
+
+## Generating parameterized tests
+Some programming languages, such as Java and C#, require special framework support to build parameterized tests. But in JavaScript, we can very easily roll our own parameterization because our test definitions are just function calls. We can use this to our advantage by pulling out each of the existing six tests as functions that take parameter values.
+
+This kind of change requires some diligent refactoring. We’ll do the first two tests together, and then you can either repeat these steps for the remaining five tests or jump ahead to the next tag in the GitHub repository:
+
+Starting with renders as a text box, wrap the entirety of the it call in an arrow function, and then call that function straight after, as shown here:
+const itRendersAsATextBox = () =>
+
+  it("renders as a text box", () => {
+
+    render(<CustomerForm original={blankCustomer} />);
+
+    expect(field("firstName")).not.toBeNull();
+
+    expect(field("firstName").tagName).toEqual(
+
+      "INPUT"
+
+    );
+
+    expect(field("firstName").type).toEqual("text");
+
+  });
+
+itRendersAsATextBox();

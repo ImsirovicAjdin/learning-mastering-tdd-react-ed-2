@@ -5,6 +5,7 @@ import {
     element,
     form,
     field,
+    click,
 } from "./reactTestExtensions";
 
 import { CustomerForm } from "../src/CustomerForm";
@@ -51,5 +52,19 @@ describe("CustomerForm", () => {
         render(<CustomerForm original={blankCustomer} />);
         const button = element("input[type=submit]");
         expect(button).not.toBeNull();
+    });
+    it("saves existing first name when submitted", () => {
+        expect.hasAssertions();
+        const customer = { firstName: "Ashley" };
+        render(
+            <CustomerForm
+              original={customer}
+              onSubmit={({ firstName }) =>
+                expect(firstName).toEqual("Ashley")
+              }
+            />
+        );
+        const button = element("input[type=submit]");
+        click(button);
     });
 });

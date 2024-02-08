@@ -4264,3 +4264,198 @@ Snapshots:   0 total
 Time:        1.306 s
 Ran all test suites.
 ```
+
+## The following test introduces a new concept, so we’ll break it down into its component parts. To start, create a new test, starting, as follows:
+it("saves existing first name when submitted", () => {
+
+  expect.hasAssertions();
+
+});
+
+The hasAssertions expectation tells Jest that it should expect at least one assertion to occur. It tells Jest that at least one assertion must run within the scope of the test; otherwise, the test has failed. You’ll see why this is important in the next step.
+
+Add the following part of the test into the outline, below the hasAssertions call:
+const customer = { firstName: "Ashley" };
+
+render(
+
+  <CustomerForm
+
+    original={customer}
+
+    onSubmit={({ firstName }) =>
+
+      expect(firstName).toEqual("Ashley")
+
+    }
+
+  />
+
+);
+
+This function call is a mix of the Arrange and Assert phases in one. The Arrange phase is the render call itself, and the Assert phase is the onSubmit handler. This is the handler that we want React to call on form submission.
+
+Finish off the test by adding the following line just below the call to render. This is the Act phase of our test, which in this test is the last phase of the test:
+const button = element("input[type=submit]");
+
+click(button);
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › saves existing first name when submitted
+
+    ReferenceError: click is not defined
+
+      65 |         );
+      66 |         const button = element("input[type=submit]");
+    > 67 |         click(button);
+         |         ^
+      68 |     });
+      69 | });
+      70 |
+
+      at Object.click (test/CustomerForm.test.js:67:9)
+
+  ● CustomerForm › saves existing first name when submitted
+
+    expect.hasAssertions()
+
+    Expected at least one assertion to be called but received none.
+
+      54 |     });
+      55 |     it("saves existing first name when submitted", () => {
+    > 56 |         expect.hasAssertions();
+         |                ^
+      57 |         const customer = { firstName: "Ashley" };
+      58 |         render(
+      59 |             <CustomerForm
+
+      at Object.hasAssertions (test/CustomerForm.test.js:56:16)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 43 passed, 44 total
+Snapshots:   0 total
+Time:        1.429 s
+Ran all test suites.
+```
+
+### // CGPT PROMPT START
+
+The error you're encountering in your Jest test suite, specifically in the "CustomerForm › saves existing first name when submitted" test, is due to the click function not being defined. In the context of your testing setup, it looks like you're trying to simulate a user clicking the submit button, but the click method you're attempting to use is not recognized by Jest or your custom testing utilities (reactTestExtensions).
+
+To resolve this issue, you'll need to properly simulate the click event on the submit button. Assuming you're using a library like @testing-library/react or similar for your render, element, and other utilities, you can use the fireEvent utility to simulate user actions.
+
+However, based on the custom testing extensions you've mentioned (reactTestExtensions), if you don't already have a function to simulate events, you'll need to create one or use an existing utility from a library like @testing-library/react.
+
+Here's how you might approach it with @testing-library/react:
+
+Ensure @testing-library/react is installed in your project. If it's not, you can add it by running:
+
+sh
+Copy code
+npm install --save-dev @testing-library/react
+Update your test to use fireEvent to simulate the click event:
+
+jsx
+Copy code
+import { fireEvent } from '@testing-library/react';
+
+it("saves existing first name when submitted", () => {
+    expect.hasAssertions();
+    const customer = { firstName: "Ashley" };
+    const { getByText } = render(<CustomerForm original={customer} onSubmit={({ firstName }) => expect(firstName).toEqual("Ashley")} />);
+    const submitButton = getByText('Add'); // Assuming 'Add' is
+
+User
+I don't want to use RTL. I want to use vanilla Jest.
+ChatGPT
+If you're looking to simulate a click event in your test environment using vanilla Jest without any additional libraries like React Testing Library, you'll need to directly manipulate the DOM elements in your tests and dispatch events on them. However, Jest by itself does not provide a direct method for simulating DOM events, as it's primarily focused on JavaScript testing. You would typically use Jest in combination with a DOM manipulation library (such as jQuery in a non-React scenario) or the native DOM API for React components.
+
+Given your setup, you'll have to create a mock function for your click event or use the native DOM API to dispatch a click event. Here's how you can do it using the native DOM API:
+
+Simulating a Click Event
+javascript
+Copy code
+it("saves existing first name when submitted", () => {
+    expect.hasAssertions();
+    const customer = { firstName: "Ashley" };
+    render(<CustomerForm original={customer} onSubmit={({ firstName }) => expect(firstName).toEqual("Ashley")} />);
+
+    const button = document.querySelector('input[type="submit"]');
+
+    // Dispatch a click event on the button
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    // Your assertion here
+});
+This approach uses the dispatchEvent method to simulate a click event on the submit button. The MouseEvent constructor creates a click event that can be dispatched on any DOM element. The { bubbles: true } option ensures that the event bubbles up through the DOM as it would in a real user interaction, which is important for event handlers attached on parent elements.
+
+Note
+While this approach works for simulating events, it has limitations compared to using a library like React Testing Library, which provides more comprehensive utilities for testing React components in a way that more closely mirrors user interactions. React Testing Library also abstracts away some of the complexities of dealing with the DOM directly.
+
+Without using such a library, you'll need to manually manage event simulation and potentially deal with more verbose and less intuitive code, especially as your application and its tests become more complex. However, for simple interactions like a button click, the native DOM API method shown above should suffice.
+
+### // CGPT PROMPT END
+
+## USING HASASSERTIONS TO AVOID FALSE POSITIVES
+
+You can now see why we need `hasAssertions`. The test is written out of order, with the assertions defined within the `onSubmit` handler. If we did not use `hasAssertions`, this test would pass right now because we never call `onSubmit`.
+
+I don’t recommend writing tests like this. In Chapter 6, *Exploring Test Doubles*, we’ll discover test doubles, which allow us to restore the usual **Arrange-Act-Assert** order to help us avoid the need for `hasAssertions`. The method we’re using here is a perfectly valid TDD practice; it’s just a little messy, so you will want to refactor it eventually.
+
+Now, you need to import click:
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  element,
+
+  form,
+
+  field,
+
+  click,
+
+} from "./reactTestExtensions";
+
+**My `npm test` result after the above:**
+```
+...
+  ● CustomerForm › saves existing first name when submitted
+
+    expect.hasAssertions()
+
+    Expected at least one assertion to be called but received none.
+
+      55 |     });
+      56 |     it("saves existing first name when submitted", () => {
+    > 57 |         expect.hasAssertions();
+         |                ^
+      58 |         const customer = { firstName: "Ashley" };
+      59 |         render(
+      60 |             <CustomerForm
+
+      at Object.hasAssertions (test/CustomerForm.test.js:57:16)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 43 passed, 44 total
+Snapshots:   0 total
+Time:        1.432 s
+Ran all test suites.
+```

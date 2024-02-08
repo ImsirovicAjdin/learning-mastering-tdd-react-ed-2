@@ -9,5 +9,6 @@ export const CustomerForm = ({ original }) => (
             value={original ? original.firstName : ""}
             readOnly
         />
+        <input type="submit" value="Add" />
     </form>
 );

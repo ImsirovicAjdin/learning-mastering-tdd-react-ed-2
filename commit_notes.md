@@ -4236,3 +4236,31 @@ Snapshots:   0 total
 Time:        1.604 s
 Ran all test suites.
 ```
+
+## To make that pass, add the following single line at the bottom of the form’s JSX:
+<form>
+
+  ...
+
+  <input type="submit" value="Add" />
+
+</form>
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       43 passed, 43 total
+Snapshots:   0 total
+Time:        1.306 s
+Ran all test suites.
+```

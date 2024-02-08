@@ -4459,3 +4459,30 @@ Snapshots:   0 total
 Time:        1.432 s
 Ran all test suites.
 ```
+
+## Making this test pass is straightforward, despite the complicated test setup. Change the component definition so that it reads as follows:
+export const CustomerForm = ({
+
+  original,
+
+  onSubmit
+
+}) => (
+
+  <form onSubmit={() => onSubmit(original)}>
+
+    ...
+
+  </form>
+
+);
+
+Now, run the test with npm test. You’ll discover that the test passed but we have a new warning, as shown here:
+console.error
+
+Error: Not implemented: HTMLFormElement.prototype.submit
+
+    at module.exports (.../node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+
+Something is not quite right. This warning is highlighting something very important that we need to take care of. Let’s stop here and look at it in detail.
+

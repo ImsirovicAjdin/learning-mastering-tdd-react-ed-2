@@ -5054,3 +5054,24 @@ const itRendersAsATextBox = () =>
   });
 
 itRendersAsATextBox();
+
+## Verify that all your tests are passing.
+Parameterize this function by promoting the firstName string to a function parameter. Then, you’ll need to pass in the firstName string into the function call itself, as shown here:
+const itRendersAsATextBox = (fieldName) =>
+
+  it("renders as a text box", () => {
+
+    render(<CustomerForm original={blankCustomer} />);
+
+    expect(field(fieldName)).not.toBeNull();
+
+    expect(field(fieldName).tagName).toEqual("INPUT");
+
+    expect(field(fieldName).type).toEqual("text");
+
+  });
+
+itRendersAsATextBox("firstName");
+
+Again, verify that your tests are passing.
+Push the itRendersAsATextBox function up one level, into the parent describe scope. That will allow you to use it in subsequent describe blocks.

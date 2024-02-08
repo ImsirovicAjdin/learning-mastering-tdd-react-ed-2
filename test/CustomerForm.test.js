@@ -71,7 +71,7 @@ describe("CustomerForm", () => {
     it("prevents the default action when submitting the form", () => {
         render(
             <CustomerForm
-                original={blankCustomr}
+                original={blankCustomer}
                 onSubmit={() => {}}
             />
         );

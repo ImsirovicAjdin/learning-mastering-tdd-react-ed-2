@@ -4611,3 +4611,43 @@ Snapshots:   0 total
 Time:        1.538 s
 Ran all test suites.
 ```
+
+## To make that pass, first, update CustomerForm so that it has an explicit return:
+export const CustomerForm = ({
+
+  original,
+
+  onSubmit
+
+}) => {
+
+  return (
+
+    <form onSubmit={() => onSubmit(original)}>
+
+      ...
+
+    </form>
+
+  );
+
+};
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       45 passed, 45 total
+Snapshots:   0 total
+Time:        1.276 s
+Ran all test suites.
+```

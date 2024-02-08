@@ -31,3 +31,12 @@ export const textOf = (elements) =>
 export const form = (id) => element("form");
 
 export const field = (fieldName) => form().elements[fieldName]; // was in test: const field = form().elements.firstName;
+
+export const submit = (formElement) => {
+  const event = new Event("submit", {
+    bubbles: true,
+    cancelable: true,
+  });
+  act(() => formElement.dispatchEvent(event));
+  return event;
+};

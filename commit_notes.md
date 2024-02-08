@@ -4486,3 +4486,128 @@ Error: Not implemented: HTMLFormElement.prototype.submit
 
 Something is not quite right. This warning is highlighting something very important that we need to take care of. Let’s stop here and look at it in detail.
 
+## Preventing the default submit action
+
+This Not implemented console error is coming from the JSDOM package. HTML forms have a default action when submitted: they navigate to another page, which is specified by the form element’s action attribute. JSDOM does not implement page navigation, which is why we get a Not implemented error.
+
+In a typical React application like the one we’re building, we don’t want the browser to navigate. We want to stay on the same page and allow React to update the page with the result of the submit operation.
+
+The way to do that is to grab the event argument from the onSubmit prop and call preventDefault on it:
+
+
+event.preventDefault();
+Since that’s production code, we need a test that verifies this behavior. We can do this by checking the event’s defaultPrevented property:
+
+
+expect(event.defaultPrevented).toBe(true);
+So, now the question becomes, how do we get access to this Event in our tests?
+
+We need to create the event object ourselves and dispatch it directly using the dispatchEvent DOM function on the form element. This event needs to be marked as cancelable, which will allow us to call preventDefault on it.
+
+WHY CLICKING THE SUBMIT BUTTON WON’T WORK
+
+In the last couple of tests, we purposely built a submit button that we could click to submit the form. While that will work for all our other tests, for this specific test, it does not work. That’s because JSDOM will take a click event and internally convert it into a submit event. There is no way we can get access to that submit event object if JSDOM creates it. Therefore, we need to directly fire the submit event.
+
+This isn’t a problem. Remember that, in our test suite, we strive to act as a real browser would – by clicking a submit button to submit the form – but having one test work differently isn’t the end of the world.
+
+Let’s put all of this together and fix the warning:
+
+Open test/reactTestExtensions.js and add the following, just below the click definition. We’ll use this in the next test:
+export const submit = (formElement) => {
+
+  const event = new Event("submit", {
+
+    bubbles: true,
+
+    cancelable: true,
+
+  });
+
+  act(() => formElement.dispatchEvent(event));
+
+  return event;
+
+};
+
+WHY DO WE NEED THE BUBBLES PROPERTY?
+
+If all of this wasn’t complicated enough, we also need to make sure the event bubbles; otherwise, it won’t make it to our event handler.
+
+When JSDOM (or the browser) dispatches an event, it traverses the element hierarchy looking for an event handler to handle the event, starting from the element the event was dispatched on, working upwards via parent links to the root node. This is known as bubbling.
+
+Why do we need to ensure this event bubbles? Because React has its own event handling system that is triggered by events reaching the React root element. The submit event must bubble up to our container element before React will process it.
+
+Import the new helper into test/CustomerForm.test.js:
+import {
+
+  ...,
+
+  submit,
+
+} from "./reactTestExtensions";
+
+Add the following test to the bottom of the CustomerForm test suite. It specifies that preventDefault should be called when the form is submitted:
+it("prevents the default action when submitting the form", () => {
+
+  render(
+
+    <CustomerForm
+
+      original={blankCustomer}
+
+      onSubmit={() => {}}
+
+    />
+
+  );
+
+  const event = submit(form());
+
+  expect(event.defaultPrevented).toBe(true);
+
+});
+
+**My `npm test` result after the above:**
+```
+...
+
+  ● CustomerForm › saves existing first name when submitted
+
+    expect.hasAssertions()
+
+    Expected at least one assertion to be called but received none.
+
+      56 |     });
+      57 |     it("saves existing first name when submitted", () => {
+    > 58 |         expect.hasAssertions();
+         |                ^
+      59 |         const customer = { firstName: "Ashley" };
+      60 |         render(
+      61 |             <CustomerForm
+
+      at Object.hasAssertions (test/CustomerForm.test.js:58:16)
+
+  ● CustomerForm › prevents the default action when submitting the form
+
+    ReferenceError: blankCustomr is not defined
+
+      72 |         render(
+      73 |             <CustomerForm
+    > 74 |                 original={blankCustomr}
+         |                           ^
+      75 |                 onSubmit={() => {}}
+      76 |             />
+      77 |         );
+
+      at Object.blankCustomr (test/CustomerForm.test.js:74:27)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       2 failed, 43 passed, 45 total
+Snapshots:   0 total
+Time:        1.538 s
+Ran all test suites.
+```

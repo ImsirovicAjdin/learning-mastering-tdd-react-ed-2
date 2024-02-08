@@ -6,6 +6,7 @@ import {
     form,
     field,
     click,
+    submit,
 } from "./reactTestExtensions";
 
 import { CustomerForm } from "../src/CustomerForm";
@@ -66,5 +67,15 @@ describe("CustomerForm", () => {
         );
         const button = element("input[type=submit]");
         click(button);
+    });
+    it("prevents the default action when submitting the form", () => {
+        render(
+            <CustomerForm
+                original={blankCustomr}
+                onSubmit={() => {}}
+            />
+        );
+        const event = submit(form());
+        expect(event.defaultPrevented).toBe(true);
     });
 });

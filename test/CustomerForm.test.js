@@ -20,15 +20,15 @@ describe("CustomerForm", () => {
     beforeEach(() => {
         initializeReactContainer();
     });
+    const itRendersAsATextBox = (fieldName) =>
+        it("renders as a text box", () => {
+            render(<CustomerForm original={blankCustomer} />);
+            expect(field(fieldName)).not.toBeNull();
+            expect(field(fieldName).tagName).toEqual("INPUT"); // Check if the element is an input
+            expect(field(fieldName).type).toEqual("text"); // Check if the input type is "text"
+        });
+    ;
     describe("first name field", () => {
-        const itRendersAsATextBox = (fieldName) =>
-            it("renders as a text box", () => {
-                render(<CustomerForm original={blankCustomer} />);
-                expect(field(fieldName)).not.toBeNull();
-                expect(field(fieldName).tagName).toEqual("INPUT"); // Check if the element is an input
-                expect(field(fieldName).type).toEqual("text"); // Check if the input type is "text"
-            });
-        ;
         itRendersAsATextBox("firstName");
         it("includes the existing value", () => {
             const customer = { firstName: "Ashley" };

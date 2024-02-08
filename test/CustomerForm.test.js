@@ -46,5 +46,10 @@ describe("CustomerForm", () => {
     it("assigns an id that matches the label id to the first name field", () => {
         render(<CustomerForm original={blankCustomer} />);
         expect(field("firstName").id).toEqual("firstName");
-    })
+    });
+    it("renders a submit button", () => {
+        render(<CustomerForm original={blankCustomer} />);
+        const button = element("input[type=submit]");
+        expect(button).not.toBeNull();
+    });
 });

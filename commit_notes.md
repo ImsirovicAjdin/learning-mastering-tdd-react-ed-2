@@ -4177,3 +4177,62 @@ The report shows that while most of your project has 100% test coverage across s
 
 The summary provides a clear picture of the test coverage and highlights areas that might need additional tests to ensure your code behaves as expected under various conditions. The goal of such coverage metrics is to help maintain high-quality, reliable code by identifying untested paths and ensuring that changes do not inadvertently break existing functionality.
 
+## We’ve now created almost everything we need for this field: the input field itself, its initial value, and its label. But we don’t have any behavior for handling changes to the value – that’s why we have the readOnly flag.
+
+Change behavior only makes sense in the context of submitting the form with updated data: if you can’t submit the form, there’s no point in changing the field value. That’s what we’ll cover in the next section.
+
+Submitting a form
+For this chapter, we will define “submit the form” to mean “call the onSubmit callback function with the current customer object.” The onSubmit callback function is a prop we’ll be passing.
+
+This section will introduce one way of testing form submission. In Chapter 6, Exploring Test Doubles, we will update this to a call to global.fetch that sends our customer data to our application’s backend API.
+
+We’ll need a few different tests to specify this behavior, each test building up the functionality we need in a step-by-step fashion. First, we’ll have a test that ensures the form has a submit button. Then, we’ll write a test that clicks that button without making any changes to the form. We’ll need another test to check that submitting the form does not cause page navigation to occur. Finally, we’ll end with a test submission after the value of the text box has been updated.
+
+Submitting without any changes
+Let’s start by creating a button in the form. Clicking it will cause the form to submit:
+
+Start by adding a test to check whether a submit button exists on the page:
+it("renders a submit button", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  const button = element("input[type=submit]");
+
+  expect(button).not.toBeNull();
+
+});
+
+**My `npm test` result after the above:**
+```
+pm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › renders a submit button
+
+    expect(received).not.toBeNull()
+
+    Received: null
+
+      51 |         render(<CustomerForm original={blankCustomer} />);
+      52 |         const button = element("input[type=submit]");
+    > 53 |         expect(button).not.toBeNull();
+         |                            ^
+      54 |     });
+      55 | });
+      56 |
+
+      at Object.toBeNull (test/CustomerForm.test.js:53:28)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 42 passed, 43 total
+Snapshots:   0 total
+Time:        1.604 s
+Ran all test suites.
+```

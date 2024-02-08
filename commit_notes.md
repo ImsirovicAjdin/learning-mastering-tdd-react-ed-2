@@ -4729,3 +4729,65 @@ Snapshots:   0 total
 Time:        1.475 s
 Ran all test suites.
 ```
+
+## It’s time to write the next test. This is very similar to the last test, except now, we need to make use of a new change helper function. We’ll define this in the next step:
+it("saves new first name when submitted", () => {
+
+  expect.hasAssertions();
+
+  render(
+
+    <CustomerForm
+
+      original={blankCustomer}
+
+      onSubmit={({ firstName }) =>
+
+        expect(firstName).toEqual("Jamie")
+
+      }
+
+    />
+
+  );
+
+  change(field("firstName"), "Jamie");
+
+  click(submitButton());
+
+});
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/CustomerForm.test.js
+  ● CustomerForm › saves new first name when submitted
+
+    expect.hasAssertions()
+
+    Expected at least one assertion to be called but received none.
+
+      82 |     });
+      83 |     it("saves new first name when submitted", () => {
+    > 84 |         expect.hasAssertions();
+         |                ^
+      85 |         render(
+      86 |             <CustomerForm
+      87 |                 original={blankCustomer}
+
+      at Object.hasAssertions (test/CustomerForm.test.js:84:16)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       1 failed, 45 passed, 46 total
+Snapshots:   0 total
+Time:        1.47 s
+Ran all test suites.
+```

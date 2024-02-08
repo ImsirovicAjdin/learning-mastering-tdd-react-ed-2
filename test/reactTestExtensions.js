@@ -40,3 +40,7 @@ export const submit = (formElement) => {
   act(() => formElement.dispatchEvent(event));
   return event;
 };
+
+export const submitButton = () => {
+  element("input[type=submit]");
+};

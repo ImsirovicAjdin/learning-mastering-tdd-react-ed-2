@@ -4651,3 +4651,81 @@ Snapshots:   0 total
 Time:        1.276 s
 Ran all test suites.
 ```
+
+## Submitting changed values
+It’s finally the time to introduce some state into our component. We will specify what should happen when the text field is used to update the customer’s first name.
+
+The most complicated part of what we’re about to do is dispatching the DOM change event. In the browser, this event is dispatched after every keystroke, notifying the JavaScript application that the text field value content has changed. An event handler receiving this event can query the target element’s value property to find out what the current value is.
+
+Crucially, we’re responsible for setting the value property before we dispatch the change event. We do that by calling the value property setter.
+
+Somewhat unfortunately for us testers, React has change tracking behavior that is designed for the browser environment, not the Node test environment. In our tests, this change tracking logic suppresses change events like the ones our tests will dispatch. We need to circumvent this logic, which we can do with a helper function called originalValueProperty, as shown here:
+
+
+const originalValueProperty = (reactElement) => {
+  const prototype =
+    Object.getPrototypeOf(reactElement);
+  return Object.getOwnPropertyDescriptor(
+    prototype,
+    "value"
+  );
+};
+As you’ll see in the next section, we’ll use this function to bypass React’s change tracking and trick it into processing our event, just like a browser would.
+
+ONLY SIMULATING THE FINAL CHANGE
+
+Rather than creating a change event for each keystroke, we’ll manufacture just the final instance. Since the event handler always has access to the full value of the element, it can ignore all intermediate events and process just the last one that is received.
+
+Let’s begin with a little bit of refactoring:
+
+We’re going to use the submit button to submit the form. We figured out how to access that button in a previous test:
+const button = element("input[type=submit]");
+
+Let’s move this definition into test/reactTestExtensions.js so that we can use it on our future tests. Open that file now and add this definition to the bottom:
+
+export const submitButton = () =>
+
+  element("input[type=submit]");
+
+Move back to test/CustomerForm.test.js and add the new helper to the imports:
+import {
+
+  ...,
+
+  submitButton,
+
+} from "./reactTestExtensions";
+
+Update the renders a submit button test so that it uses that new helper, as shown here:
+it("renders a submit button", () => {
+
+  render(<CustomerForm original={blankCustomer} />);
+
+  expect(submitButton()).not.toBeNull();
+
+});
+
+**THE HELPER EXTRACTION DANCE**
+
+**Why are we doing this dance of writing a variable in a test (such as const button = ...) only to then extract it as a function moments later, as we just did with submitButton?**
+
+**Following this approach is a systematic way of building a library of helper functions, meaning you don’t have to think too heavily about the “right” design. First, start with a variable. If it turns out that you’ll use that variable a second or third time, then extract it into a function. No big deal.**
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       45 passed, 45 total
+Snapshots:   0 total
+Time:        1.475 s
+Ran all test suites.
+```

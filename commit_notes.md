@@ -5346,3 +5346,30 @@ describe("AppointmentForm", () => {
   });
 
 });
+
+
+## Make this test pass by implementing and creating a new file, src/AppointmentForm.js, as shown here:
+import React from "react";
+
+export const AppointmentForm = () => <form />;
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       70 passed, 70 total
+Snapshots:   0 total
+Time:        2.213 s
+Ran all test suites.
+```

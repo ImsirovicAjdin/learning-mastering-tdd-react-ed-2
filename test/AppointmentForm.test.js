@@ -16,4 +16,11 @@ describe("AppointmentForm", () => {
         render(<AppointmentForm />);
         expect(form()).not.toBeNull();
     });
+    describe("service field", () => {
+        it("renders as a select box", () => {
+            render(<AppointmentForm />);
+            expect(field("service").not.toBeNull();
+            expect(field("service").tagName).toEqual("SELECT");
+          });
+    });
 });

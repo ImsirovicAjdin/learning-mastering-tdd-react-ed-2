@@ -5290,4 +5290,59 @@ Time:        1.436 s
 Ran all test suites.
 ```
 
+## CH 5: Adding Complex Form Interactions
 
+It’s time to apply what you’ve learned to a more complicated HTML setup. In this chapter, we’ll test-drive a new component: AppointmentForm. It contains a select box, for selecting the service required, and a grid of radio buttons that form a calendar view for selecting the appointment time.
+
+Combining both layout and form input, the code in this chapter shows how TDD gives you a structure for your work that makes even complicated scenarios straightforward: you will use your tests to grow the component into a component hierarchy, splitting out functionality from the main component as it begins to grow.
+
+In this chapter, we will cover the following topics:
+
+Choosing a value from a select box
+Constructing a calendar view
+Test-driving radio button groups
+Reducing effort when constructing components
+By the end of the chapter, you’ll have learned how to apply test-driven development to complex user input scenarios. These techniques will be useful for all kinds of form components, not just select boxes and radio buttons.
+
+Technical requirements
+The code files for this chapter can be found here: https://github.com/PacktPublishing/Mastering-React-Test-Driven-Development-Second-Edition/tree/main/Chapter05.
+
+Choosing a value from a select box
+Let’s start by creating a component for booking new appointments, named AppointmentForm.
+
+The first field is a select box for choosing which service the customer requires: cut, color, blow-dry, and so on. Let’s create that now:
+
+Create a new file, test/AppointmentForm.test.js, with the following test and setup:
+import React from "react";
+
+import {
+
+  initializeReactContainer,
+
+  render,
+
+  field,
+
+  form,
+
+} from "./reactTestExtensions";
+
+import { AppointmentForm } from "../src/AppointmentForm";
+
+describe("AppointmentForm", () => {
+
+  beforeEach(() => {
+
+    initializeReactContainer();
+
+  });
+
+  it("renders a form", () => {
+
+    render(<AppointmentForm />);
+
+    expect(form()).not.toBeNull();
+
+  });
+
+});

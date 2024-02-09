@@ -5378,3 +5378,50 @@ Create a nested describe block for the service field. We’ll jump to this right
 describe("service field", () => {
 
 });
+
+## Add the following test to the describe block:
+it("renders as a select box", () => {
+
+  render(<AppointmentForm />);
+
+  expect(field("service").not.toBeNull();
+
+  expect(field("service").tagName).toEqual("SELECT");
+
+});
+
+## To make this test pass, modify the AppointmentForm component, as follows:
+export const AppointmentForm = () => (
+
+  <form
+
+    <select name="service" />
+
+  </form>
+
+);
+
+Run the tests and ensure they are all passing.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/AppointmentForm.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       71 passed, 71 total
+Snapshots:   0 total
+Time:        1.765 s
+Ran all test suites.
+```
+
+With that, we’ve done the basic scaffolding for the new select box field so that it’s ready to be populated with option elements.

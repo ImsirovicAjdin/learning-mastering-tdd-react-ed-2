@@ -5425,3 +5425,47 @@ Ran all test suites.
 ```
 
 With that, we’ve done the basic scaffolding for the new select box field so that it’s ready to be populated with option elements.
+
+## Providing select box options
+Our salon provides a whole range of salon services. We should ensure that they are all listed in the app. We could start our test by defining our expectations, like this:
+
+
+it("lists all salon services", () => {
+  const selectableServices = [
+    "Cut",
+    "Blow-dry",
+    "Cut & color",
+    "Beard trim",
+    "Cut & beard trim",
+    "Extensions"
+  ];
+  ...
+});
+If we do this, we’ll end up repeating the same array of services in our test code and our production code. We can avoid that repetition by focusing our unit tests on the behavior of the select box rather than the static data that populates it: what should the select box do?
+
+As it turns out, we can specify the functionality of our select box with just two items in our array. There’s another good reason for keeping it to just two, which is that keeping the array brief helps us focus the test on what’s important: the behavior, not the data.
+
+That leaves the question, how do we use only two items in our test when we need six items for the production code?
+
+We’ll do this by introducing a new prop, selectableServices, to AppointmentForm. Our tests can choose to specify a value if they need to. In our production code, we can specify a value for the component’s defaultProps.
+
+defaultProps is a nifty mechanism that React offers for setting default prop values that will be used when required props are not explicitly provided.
+
+For our tests that don’t care about the select box values, we can avoid passing the prop and ignore it entirely in the test. For the tests that do care, we can provide a short, two-item array for our tests.
+
+HOW DO WE VERIFY THE REAL SELECT BOX VALUES?
+
+Testing static data does happen, just not within our unit tests. One place this can be tested is within acceptance tests, which we’ll look at in Part 4, Behavior-Driven Development with Cucumber.
+
+We’ll start with a test to ensure the first value is a blank entry. This is the value that’s initially selected when the user creates a new appointment: no option is selected. Let’s write that test now:
+
+Add the following test at the end of the AppointmentForm test suite. It specifies that the very first item in the select box is blank, meaning the user is not automatically assigned a choice from our list of services:
+it("has a blank value as the first value", () => {
+
+  render(<AppointmentForm />);
+
+  const firstOption = field("service").childNodes[0];
+
+  expect(firstOption.value).toEqual("");
+
+});

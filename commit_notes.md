@@ -5960,3 +5960,117 @@ Snapshots:   0 total
 Time:        1.753 s
 Ran all test suites.
 ```
+
+## Let’s finish with a small bit of refactoring. Your last two tests both have the same definition for services. Pull that out of each test, placing it above the definition of blankAppointment. Make sure that you delete that line from both tests:
+describe("AppointmentForm", () => {
+
+  const blankAppointment = {
+
+    service: "",
+
+  };
+
+  const services = ["Cut", "Blow-dry"];
+
+  ...
+
+});
+
+That completes this test, but there is still more functionality to add if we want a fully functional select box. Completing those tests is left as one of the Exercises at the end of this chapter. They work the same as the tests for the text boxes in CustomerForm.
+
+### CHATGPT PROMPT START
+
+To refactor the test suite for `AppointmentForm` as described, you would move the common definition of `services` outside of the individual tests and place it at a scope where it is accessible by all tests that need it, just above the definition of `blankAppointment`. This reduces repetition and makes the tests cleaner and easier to maintain. Below is the refactored version of the test suite incorporating these changes:
+
+```javascript
+import React from "react";
+import {
+    initializeReactContainer,
+    render,
+    field,
+    form,
+} from "./reactTestExtensions";
+import { AppointmentForm } from "../src/AppointmentForm";
+
+describe("AppointmentForm", () => {
+    // Define services array here to be accessible by all tests within this describe block
+    const services = ["Cut", "Blow-dry"];
+    const blankAppointment = {
+        service: "",
+    };
+    
+    const findOption = (selectBox, textContent) => {
+        const options = Array.from(selectBox.childNodes);
+        return options.find(
+            option => option.textContent === textContent
+        );
+    };
+    
+    beforeEach(() => {
+        initializeReactContainer();
+    });
+
+    const labelsOfAllOptions = (element) => {
+        return Array.from(
+            element.childNodes,
+            (node) => node.textContent
+        );
+    };
+
+    it("renders a form", () => {
+        render(<AppointmentForm original={blankAppointment} />);
+        expect(form()).not.toBeNull();
+    });
+    
+    describe("service field", () => {
+        it("renders as a select box", () => {
+            render(<AppointmentForm original={blankAppointment} />);
+            expect(field("service")).not.toBeNull();
+            expect(field("service").tagName).toEqual("SELECT");
+        });
+        
+        it("has a blank value as the first value", () => {
+            render(<AppointmentForm original={blankAppointment} />);
+            const firstOption = field("service").childNodes[0];
+            expect(firstOption.value).toEqual("");
+        });
+        
+        it("lists all salon services", () => {
+            render(<AppointmentForm selectableServices={services} original={blankAppointment} />);
+            expect(labelsOfAllOptions(field("service"))).toEqual(expect.arrayContaining(services));
+        });
+        
+        it("pre-selects the existing value", () => {
+            const appointment = { service: "Blow-dry" };
+            render(<AppointmentForm selectableServices={services} original={appointment} />);
+            const option = findOption(field("service"), "Blow-dry");
+            expect(option.selected).toBe(true);
+        });
+    });
+});
+```
+
+This refactoring step pulls the `services` array definition out of each individual test and places it in a common scope for the `describe("AppointmentForm", () => {...})` block. This way, the `services` array is defined once and reused across multiple tests, making the code DRY (Don't Repeat Yourself) and easier to update if the services change.
+
+### CHATGPT PROMPT END
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       74 passed, 74 total
+Snapshots:   0 total
+Time:        1.784 s
+Ran all test suites.
+```

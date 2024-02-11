@@ -15,6 +15,7 @@ describe("AppointmentForm", () => {
             option => option.textContent === textContent
         );
     };
+    const services = ["Cut", "Blow-dry"];
     const blankAppointment = {
         service: "",
     };
@@ -45,7 +46,6 @@ describe("AppointmentForm", () => {
             expect(firstOption.value).toEqual("");
           });
           it("lists all salon services", () => {
-            const services = ["Cut", "Blow-dry"];
             render (
                 <AppointmentForm selectableServices={services} original={blankAppointment} />
             );
@@ -54,7 +54,6 @@ describe("AppointmentForm", () => {
             ).toEqual(expect.arrayContaining(services));
           });
           it("pre-selects the existing value", () => {
-            const services = ["Cut", "Blow-dry"];
             const appointment = { service: "Blow-dry" };
             render (
                 <AppointmentForm

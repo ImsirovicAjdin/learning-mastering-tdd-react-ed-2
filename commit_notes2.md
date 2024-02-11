@@ -569,3 +569,11 @@ it("renders radio buttons in the correct table cell positions", () => {
   );
   expect(cellsWithRadioButtons()).toEqual([0, 7, 8]);
 });
+
+## Notice that this test uses a cellsWithRadioButtons helper, which we need to define now. You can place this just above the test; there’s no need to move it to the extension’s module since it’s specific to this one component:
+const cellsWithRadioButtons = () =>
+  elements("input[type=radio]").map((el) =>
+    elements("td").indexOf(el.parentNode)
+  );
+
+

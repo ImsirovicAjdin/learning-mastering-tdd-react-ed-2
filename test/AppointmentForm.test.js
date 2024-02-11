@@ -71,6 +71,11 @@ describe("AppointmentForm", () => {
           });
     });
     describe("time slot table", () => {
+        const cellsWithRadioButtons = () =>
+            elements("input[type=radio]").map((el) =>
+                elements("td").indexOf(el.parentNode)
+            );
+
         it("renders a table for time slots with an id", () => {
             render(
                 <AppointmentForm original={blankAppointment} />

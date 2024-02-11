@@ -5505,3 +5505,71 @@ Snapshots:   0 total
 Time:        2.138 s
 Ran all test suites.
 ```
+
+## Back in your tests, add this new helper just after the beforeEach block. We’ll make use of it in our next test to build an array of all the labels of the select box options:
+const labelsOfAllOptions = (element) =>
+
+  Array.from(
+
+    element.childNodes,
+
+    (node) => node.textContent
+
+  );
+
+Add the following test. This makes use of a new prop, selectableServices, which is simply the array of available options:
+it("lists all salon services", () => {
+
+  const services = ["Cut", "Blow-dry"];
+
+  render(
+
+    <AppointmentForm selectableServices={services} />
+
+  );
+
+  expect(
+
+    labelsOfAllOptions(field("service"))
+
+  ).toEqual(expect.arrayContaining(services));
+
+});
+
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ FAIL  test/AppointmentForm.test.js
+  ● AppointmentForm › service field › lists all salon services
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: ArrayContaining ["Cut", "Blow-dry"]
+    Received: undefined
+
+      43 |             expect(
+      44 |                 labelsOfAllOptions(field("service"))
+    > 45 |             ).toEqual(expect.arrayContaining(services));
+         |               ^
+      46 |           });
+      47 |     });
+      48 | });
+
+      at Object.toEqual (test/AppointmentForm.test.js:45:15)
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       1 failed, 72 passed, 73 total
+Snapshots:   0 total
+Time:        1.808 s, estimated 2 s
+Ran all test suites.
+```

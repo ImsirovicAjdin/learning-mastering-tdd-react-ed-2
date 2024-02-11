@@ -5,6 +5,7 @@ import {
     render,
     field,
     form,
+    element,
 } from "./reactTestExtensions";
 import { AppointmentForm } from "../src/AppointmentForm";
 
@@ -67,5 +68,15 @@ describe("AppointmentForm", () => {
             );
             expect(option.selected).toBe(true);
           });
+    });
+    describe("time slot table", () => {
+        it("renders a table for time slots with an id", () => {
+            render(
+                <AppointmentForm original={blankAppointment} />
+            );
+            expect(
+                element("table#time-slots")
+            ).not.toBeNull();
+        });
     });
 });

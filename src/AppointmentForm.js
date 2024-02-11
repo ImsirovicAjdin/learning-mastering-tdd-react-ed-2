@@ -1,6 +1,8 @@
 import React from "react";
 export const AppointmentForm = () => (
     <form>
-        <select name="service" />
+        <select name="service">
+            <option />
+        </select>
     </form>
 );

@@ -5469,3 +5469,39 @@ it("has a blank value as the first value", () => {
   expect(firstOption.value).toEqual("");
 
 });
+
+## Make that pass by adding a blank option element to the existing select element:
+export const AppointmentForm = () => (
+
+  <form
+
+    <select name="service">
+
+      <option />
+
+    </select>
+
+  </form>
+
+);
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/AppointmentForm.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       72 passed, 72 total
+Snapshots:   0 total
+Time:        2.138 s
+Ran all test suites.
+```

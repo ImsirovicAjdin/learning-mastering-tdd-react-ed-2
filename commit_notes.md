@@ -5573,3 +5573,114 @@ Snapshots:   0 total
 Time:        1.808 s, estimated 2 s
 Ran all test suites.
 ```
+
+## CHOOSING TEST DATA
+
+I’ve used “real” data for my expected services: Cut and Blow-dry. It’s also fine to use non-real names such as Service A and Service B. Often, that can be more descriptive. Both are valid approaches.
+
+Let’s make this pass. Change the component definition, as follows:
+export const AppointmentForm = ({
+
+  selectableServices
+
+}) => (
+
+  <form>
+
+    <select name="service">
+
+      <option />
+
+      {selectableServices.map(s => (
+
+        <option key={s}>{s}</option>
+
+      ))}
+
+    </select>
+
+  </form>
+
+);
+
+Check that the latest test now passes. However, you will see that our earlier tests break because of the introduction of the new prop.
+We can make these tests pass again using defaultProps. Just below the definition of the AppointmentForm function in src/AppointmentForm.js, add the following:
+AppointmentForm.defaultProps = {
+
+  selectableServices: [
+
+    "Cut",
+
+    "Blow-dry",
+
+    "Cut & color",
+
+    "Beard trim",
+
+    "Cut & beard trim",
+
+    "Extensions",
+
+  ]
+
+};
+
+Run your tests and verify they are passing.
+That’s all there is to it. With that, we’ve learned how to define the behavior of our component using a short two-item array and saved the real data for defaultProps.
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ FAIL  test/AppointmentForm.test.js
+  ● AppointmentForm › service field › lists all salon services
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: ArrayContaining ["Cut", "Blow-dry"]
+    Received: undefined
+
+      43 |             expect(
+      44 |                 labelsOfAllOptions(field("service"))
+    > 45 |             ).toEqual(expect.arrayContaining(services));
+         |               ^
+      46 |           });
+      47 |     });
+      48 | });
+
+      at Object.toEqual (test/AppointmentForm.test.js:45:15)
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       1 failed, 72 passed, 73 total
+Snapshots:   0 total
+Time:        1.607 s, estimated 2 s
+Ran all test suites.
+```
+
+### CHATGPT PROMPT START
+
+The test failure in the `AppointmentForm.test.js` file under the "lists all salon services" test case is because the function `labelsOfAllOptions` doesn't return any value, which leads to the `expect` statement receiving `undefined` instead of the expected array of option labels.
+
+To fix this issue, you need to ensure that `labelsOfAllOptions` function returns the array of option labels. Here's how you can modify the `labelsOfAllOptions` function to fix the issue:
+
+```javascript
+const labelsOfAllOptions = (element) => {
+    return Array.from(
+        element.childNodes,
+        (node) => node.textContent
+    );
+};
+```
+
+By adding a `return` statement before `Array.from`, you ensure that the function returns the array of text content from each child node of the `select` element. This should allow your test to correctly compare the received array of option labels against the expected array, fixing the test failure.
+
+### CHATGPT PROMPT END

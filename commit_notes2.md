@@ -117,3 +117,64 @@ Run the tests and verify that they are all passing.
 That’s all there is to the table element. Now, let’s get some data into the first column.
 
 MY TESTS PASS NOW.
+
+
+## Adding a header column
+For the next test, we’ll test the left-hand header column that displays a list of times. We’ll introduce two new props, `salonOpensAt` and `salonClosesAt`, which inform the component of which time to show each day. Follow these steps:
+
+Add the following test:
+```
+it("renders a time slot for every half an hour between open and close times", () => {
+  render(
+    <AppointmentForm
+      original={blankAppointment}
+      salonOpensAt={9}
+      salonClosesAt={11}
+    />
+  );
+  const timesOfDayHeadings = elements("tbody >* th");
+  expect(timesOfDayHeadings[0]).toContainText(
+    "09:00"
+  );
+  expect(timesOfDayHeadings[1]).toContainText(
+    "09:30"
+  );
+  expect(timesOfDayHeadings[3]).toContainText(
+    "10:30"
+  );
+});
+```
+
+**My npm test results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ FAIL  test/AppointmentForm.test.js
+  ● AppointmentForm › time slot table › renders a time slot for every half an hour between open and close times
+
+    ReferenceError: elements is not defined
+
+      87 |                 />
+      88 |             );
+    > 89 |             const timesOfDayHeadings = elements("tbody >* th");
+         |                                        ^
+      90 |             expect(timesOfDayHeadings[0]).toContainText(
+      91 |                 "09:00"
+      92 |             );
+
+      at Object.elements (test/AppointmentForm.test.js:89:40)
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       1 failed, 75 passed, 76 total
+Snapshots:   0 total
+Time:        1.761 s
+Ran all test suites.
+```

@@ -178,3 +178,121 @@ Snapshots:   0 total
 Time:        1.761 s
 Ran all test suites.
 ```
+
+## ASSERTING ON ARRAY PATTERNS
+
+In this example, we are checking `textContent` on three array entries, even though there are four entries in the array.
+
+**Properties that are the same for all array entries only need to be tested on one entry. Properties that vary per entry, such as `textContent`, need to be tested on two or three entries, depending on how many you need to test a pattern.**
+
+**For this test, I want to test that it starts and ends at the right time and that each time slot increases by 30 minutes. I can do that with assertions on array entries 0, 1, and 3.**
+
+**This test “breaks” our rule of one expectation per test. However, in this scenario, I think it’s okay. An alternative approach might be to use the `textOf` helper instead.**
+
+You’ll need to pull the `elements` helper into your imports:
+import {
+  initializeReactContainer,
+  render,
+  field,
+  form,
+  element,
+  elements,
+} from "./reactTestExtensions";
+
+To make this pass, add the following functions above the TimeSlotTable component. They calculate the list of daily time slots:
+const timeIncrements = (
+  numTimes,
+  startTime,
+  increment
+) =>
+  Array(numTimes)
+    .fill([startTime])
+    .reduce((acc, _, i) =>
+      acc.concat([startTime + i * increment])
+    );
+const dailyTimeSlots = (
+  salonOpensAt,
+  salonClosesAt
+) => {
+  const totalSlots =
+    (salonClosesAt – salonOpensAt) * 2;
+  const startTime = new Date()
+    .setHours(salonOpensAt, 0, 0, 0);
+  const increment = 30 * 60 * 1000;
+  return timeIncrements(
+    totalSlots,
+    startTime,
+    increment
+  );
+};
+Define the toTimeValue function, as follows:
+const toTimeValue = timestamp =>
+
+  new Date(timestamp).toTimeString().substring(0, 5);
+
+Now, you can make use of those two functions. Update TimeSlotTable so that it reads as follows:
+const TimeSlotTable = ({
+  salonOpensAt,
+  salonClosesAt
+}) => {
+  const timeSlots = dailyTimeSlots(
+    salonOpensAt,
+    salonClosesAt);
+  return (
+    <table id="time-slots">
+      <tbody>
+        {timeSlots.map(timeSlot => (
+          <tr key={timeSlot}>
+            <th>{toTimeValue(timeSlot)}</th>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+In the JSX for AppointmentForm, pass the salonOpensAt and salonClosesAt props to TimeSlotTable:
+export const AppointmentForm = ({
+  original,
+  selectableServices,
+  service,
+  salonOpensAt,
+  salonClosesAt
+}) => (
+  <form>
+    ...
+    <TimeSlotTable
+      salonOpensAt={salonOpensAt}
+      salonClosesAt={salonClosesAt} />
+  </form>
+);
+
+Fill in defaultProps for both salonOpensAt and salonsCloseAt:
+AppointmentForm.defaultProps = {
+  salonOpensAt: 9,
+  salonClosesAt: 19,
+  selectableServices: [ ... ]
+};
+
+Run the tests and make sure everything is passing.
+
+**My npm test results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       76 passed, 76 total
+Snapshots:   0 total
+Time:        1.756 s
+Ran all test suites.
+```

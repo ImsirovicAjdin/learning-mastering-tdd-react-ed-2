@@ -6,6 +6,7 @@ import {
     field,
     form,
     element,
+    elements,
 } from "./reactTestExtensions";
 import { AppointmentForm } from "../src/AppointmentForm";
 

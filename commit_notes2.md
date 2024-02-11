@@ -346,3 +346,36 @@ Snapshots:   0 total
 Time:        1.813 s
 Ran all test suites.
 ```
+
+## Modify the table JSX so that it includes a new table row:
+<table id="time-slots">
+  <thead>
+    <tr>
+      <th />
+    </tr>
+  </thead>
+  <tbody>
+    ...
+  </tbody>
+</table>
+
+**My npm test results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       77 passed, 77 total
+Snapshots:   0 total
+Time:        1.723 s
+Ran all test suites.
+```

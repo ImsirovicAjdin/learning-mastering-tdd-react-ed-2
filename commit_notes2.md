@@ -542,3 +542,30 @@ Snapshots:   0 total
 Time:        1.946 s
 Ran all test suites.
 ```
+
+## Test-driving radio button groups
+Now that we have our table with headings in place, it’s time to add radio buttons to each of the table cells. Not all cells will have radio buttons – only those that represent an available time slot will have a radio button.
+
+This means we’ll need to pass in another new prop to AppointmentForm that will help us determine which time slots to show. This prop is availableTimeSlots, which is an array of objects that list times that are still available. Follow these steps:
+
+Add the following test, which establishes a value for the availableTimeSlots prop and then checks that radio buttons have been rendered for each of those slots:
+it("renders radio buttons in the correct table cell positions", () => {
+  const oneDayInMs = 24 * 60 * 60 * 1000;
+  const today = new Date();
+  const tomorrow = new Date(
+    today.getTime() + oneDayInMs
+  );
+  const availableTimeSlots = [
+    { startsAt: today.setHours(9, 0, 0, 0) },
+    { startsAt: today.setHours(9, 30, 0, 0) },
+    { startsAt: tomorrow.setHours(9, 30, 0, 0) },
+  ];
+  render(
+    <AppointmentForm
+      original={blankAppointment}
+      availableTimeSlots={availableTimeSlots}
+      today={today}
+    />
+  );
+  expect(cellsWithRadioButtons()).toEqual([0, 7, 8]);
+});

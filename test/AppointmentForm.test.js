@@ -121,5 +121,25 @@ describe("AppointmentForm", () => {
             expect(dates[1]).toContainText("Sun 02");
             expect(dates[6]).toContainText("Fri 07");
         });
+        it("renders radio buttons in the correct table cell positions", () => {
+            const oneDayInMs = 24 *60 *60 *1000;
+            const today = new Date();
+            const tomorrow = new Date(
+                today.getTime() + oneDayInMs
+            );
+            const availableTimeSlots = [
+                { startsAt: today.setHours(9, 0, 0, 0) },
+                { startsAt: today.setHours(9, 30, 0, 0) },
+                { startsAt: tomorrow.setHours(9, 30, 0, 0) },
+            ];
+            render(
+                <AppointmentForm
+                    original={blankAppointment}
+                    availableTimeSlots={availableTimeSlots}
+                    today={today}
+                />
+            );
+            expect(cellsWithRadioButtons()).toEqual([0, 7, 8]);
+        });
     });
 });

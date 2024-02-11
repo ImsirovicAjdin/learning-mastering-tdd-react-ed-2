@@ -9,6 +9,12 @@ import {
 import { AppointmentForm } from "../src/AppointmentForm";
 
 describe("AppointmentForm", () => {
+    const findOption = (selectBox, textContent) => {
+        const options = Array.from(selectBox.childNodes);
+        return options.find(
+            option => option.textContent === textContent
+        );
+    };
     beforeEach(() => {
         initializeReactContainer();
     });
@@ -43,6 +49,21 @@ describe("AppointmentForm", () => {
             expect(
                 labelsOfAllOptions(field("service"))
             ).toEqual(expect.arrayContaining(services));
+          });
+          it("pre-selects the existing value", () => {
+            const services = ["Cut", "Blow-dry"];
+            const appointment = { service: "Blow-dry" };
+            render (
+                <AppointmentForm
+                    selectableServices={services}
+                    original={appointment}
+                />
+            );
+            const option = findOption(
+                field("service"),
+                "Blow-dry"
+            );
+            expect(option.selected).toBe(true);
           });
     });
 });

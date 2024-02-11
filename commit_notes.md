@@ -5707,3 +5707,200 @@ Snapshots:   0 total
 Time:        1.795 s
 Ran all test suites.
 ```
+
+## Preselecting a value
+Let’s ensure that our component preselects the value that has already been saved if we’re editing an existing appointment:
+
+Define a findOption arrow function at the top of the describe block. This function searches the DOM tree for a particular text node:
+const findOption = (selectBox, textContent) => {
+
+  const options = Array.from(selectBox.childNodes);
+
+  return options.find(
+
+    option => option.textContent === textContent
+
+  );
+
+};
+
+In our next test, we can find that node and then check that it is selected:
+it("pre-selects the existing value", () => {
+
+  const services = ["Cut", "Blow-dry"];
+
+  const appointment = { service: "Blow-dry" };
+
+  render(
+
+    <AppointmentForm
+
+      selectableServices={services}
+
+      original={appointment}
+
+    />
+
+  );
+
+  const option = findOption(
+
+    field("service"),
+
+    "Blow-dry"
+
+  );
+
+  expect(option.selected).toBe(true);
+
+});
+
+To make this pass, set the value property on the root select tag:
+<select
+
+  name="service"
+
+  value={original.service}
+
+  readOnly>
+
+**My `npm test` result after the above:**
+```
+...
+
+  ● AppointmentForm › service field › pre-selects the existing value
+
+    ReferenceError: original is not defined
+
+      4 |         <select
+      5 |             name="service"
+    > 6 |             value={original.service}
+        |                    ^
+      7 |             readOnly
+      8 |         >
+      9 |             <option />
+
+      at original (src/AppointmentForm.js:6:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:16305:18)
+      at mountIndeterminateComponent (node_modules/react-dom/cjs/react-dom.development.js:20074:13)
+      at beginWork (node_modules/react-dom/cjs/react-dom.development.js:21587:16)
+      at beginWork$1 (node_modules/react-dom/cjs/react-dom.development.js:27426:14)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26560:12)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26466:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26434:7)
+      at recoverFromConcurrentError (node_modules/react-dom/cjs/react-dom.development.js:25850:20)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25750:22)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at render (test/reactTestExtensions.js:12:6)
+      at Object.<anonymous> (test/AppointmentForm.test.js:56:19)
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       5 failed, 69 passed, 74 total
+Snapshots:   0 total
+Time:        1.918 s
+Ran all test suites.
+```
+
+
+### CHATGPT PROMPT START
+
+The error messages you're encountering in the test output are indicating a specific issue with the way `original` is used in the `AppointmentForm` component. The `original` object, which is supposed to hold the currently selected service, is being referenced without being defined or passed as a prop to the component. This leads to a `ReferenceError: original is not defined` when the component tries to access `original.service`.
+
+To fix this issue, you need to ensure that `original` is correctly defined and passed as a prop to the `AppointmentForm`. Additionally, you have a typo in your test code for the function name `findOption` that you're trying to call as `findOPtion`, which will also cause a runtime error. Here's how you can address these issues:
+
+1. **Define and Pass `original` Prop Correctly**: Ensure that the `original` prop is passed to `AppointmentForm` whenever it's rendered, especially in the test case that expects `original` to be defined.
+
+2. **Correct Typo in Function Call**: Change `findOPtion` to `findOption` in the test case that checks for the pre-selected value.
+
+Here is how you can update the `AppointmentForm` component to include a default value for `original` to avoid the error when it's not passed:
+
+```javascript
+export const AppointmentForm = ({ selectableServices, original = { service: '' } }) => (
+    <form>
+        <select
+            name="service"
+            value={original.service}
+            readOnly
+        >
+            <option />
+            {selectableServices.map(s => (
+                <option key={s}>{s}</option>
+            ))}
+        </select>
+    </form>
+);
+```
+
+And update your test to correct the typo and ensure `original` is passed correctly:
+
+```javascript
+it("pre-selects the existing value", () => {
+    const services = ["Cut", "Blow-dry"];
+    const appointment = { service: "Blow-dry" };
+    render(
+        <AppointmentForm
+            selectableServices={services}
+            original={appointment}
+        />
+    );
+    const option = findOption(
+        field("service"),
+        "Blow-dry"
+    );
+    expect(option.selected).toBe(true);
+});
+```
+
+These changes should help resolve the test failures and the `ReferenceError` by ensuring that `original` is always defined when attempting to access its properties and by correcting the typo in the test case.
+
+### CHATGPT PROMPT END
+
+**My `npm test` result after the above:**
+```
+
+  ● AppointmentForm › service field › pre-selects the existing value
+
+    ReferenceError: original is not defined
+
+      4 |         <select
+      5 |             name="service"
+    > 6 |             value={original.service}
+        |                    ^
+      7 |             readOnly
+      8 |         >
+      9 |             <option />
+
+      at original (src/AppointmentForm.js:6:20)
+      at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:16305:18)
+      at mountIndeterminateComponent (node_modules/react-dom/cjs/react-dom.development.js:20074:13)
+      at beginWork (node_modules/react-dom/cjs/react-dom.development.js:21587:16)
+      at beginWork$1 (node_modules/react-dom/cjs/react-dom.development.js:27426:14)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom.development.js:26560:12)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom.development.js:26466:5)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom.development.js:26434:7)
+      at recoverFromConcurrentError (node_modules/react-dom/cjs/react-dom.development.js:25850:20)
+      at performConcurrentWorkOnRoot (node_modules/react-dom/cjs/react-dom.development.js:25750:22)
+      at flushActQueue (node_modules/react/cjs/react.development.js:2667:24)
+      at act (node_modules/react/cjs/react.development.js:2582:11)
+      at render (test/reactTestExtensions.js:12:6)
+      at Object.<anonymous> (test/AppointmentForm.test.js:56:19)
+
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       5 failed, 69 passed, 74 total
+Snapshots:   0 total
+Time:        1.918 s
+Ran all test suites.
+```

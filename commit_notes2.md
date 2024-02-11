@@ -403,3 +403,142 @@ WHY PASS A DATE INTO THE COMPONENT?
 When you’re testing a component that deals with dates and times, you almost always want a way to control the time values that the component will see, as we have in this test. You’ll rarely want to just use the real-world time because that can cause intermittent failures in the future. For example, your test may assume that a month has at least 30 days in the year, which is only true for 11 out of 12 months. It’s better to fix the month to a specific month rather than have an unexpected failure when February comes around.
 
 For an in-depth discussion on this topic, take a look at https://reacttdd.com/controlling-time.
+
+To make that pass, first, create a function that lists the 7 days we’re after, in the same way we did with time slots. You can place this just after the toTimeValue function:
+const weeklyDateValues = (startDate) => {
+
+  const midnight = startDate.setHours(0, 0, 0, 0);
+
+  const increment = 24 * 60 * 60 * 1000;
+
+  return timeIncrements(7, midnight, increment);
+
+};
+
+Define the toShortDate function, which formats our date as a short string:
+const toShortDate = (timestamp) => {
+
+  const [day, , dayOfMonth] = new Date(timestamp)
+
+    .toDateString()
+
+    .split(" ");
+
+  return `${day} ${dayOfMonth}`;
+
+};
+
+Modify TimeSlotTable so that it takes the new today prop and uses the two new functions:
+const TimeSlotTable = ({
+
+  salonOpensAt,
+
+  salonClosesAt,
+
+  today
+
+}) => {
+
+  const dates = weeklyDateValues(today);
+
+  ...
+
+  return (
+
+    <table id="time-slots">
+
+      <thead>
+
+        <tr>
+
+          <th />
+
+          {dates.map(d => (
+
+            <th key={d}>{toShortDate(d)}</th>
+
+          ))}
+
+        </tr>
+
+      </thead>
+
+      ...
+
+    </table>
+
+  )
+
+};
+
+Within AppointmentForm, pass the today prop from AppointmentForm into TimeSlotTable:
+export const AppointmentForm = ({
+
+  original,
+
+  selectableServices,
+
+  service,
+
+  salonOpensAt,
+
+  salonClosesAt,
+
+  today
+
+}) => {
+
+  ...
+
+  return <form>
+
+    <TimeSlotTable
+
+      ...
+
+      salonOpensAt={salonOpensAt}
+
+      salonClosesAt={salonClosesAt}
+
+      today={today}
+
+    />
+
+  </form>;
+
+};
+
+Finally, add a defaultProp for today. Set it to the current date by calling the Date constructor:
+AppointmentForm.defaultProps = {
+
+  today: new Date(),
+
+  ...
+
+}
+
+Run the tests. They should be all green.
+With that, we’re done with our table layout. You’ve seen how to write tests that specify the table structure itself and fill in both a header column and a header row. In the next section, we’ll fill in the table cells with radio buttons.
+
+**My npm test results:**
+```
+npm te
+st
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+Determining test suites to r
+ PASS  test/AppointmentForm.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       78 passed, 78 total
+Snapshots:   0 total
+Time:        1.946 s
+Ran all test suites.
+```

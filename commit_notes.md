@@ -5904,3 +5904,59 @@ Snapshots:   0 total
 Time:        1.918 s
 Ran all test suites.
 ```
+
+## ACCESSIBLE RICH INTERNET APPLICATIONS (ARIA) LABELS
+
+If you have experience with building React applications, you may be expecting to set the aria-label property on the select element. However, one of this chapter’s Exercises is to add a label element for this select box that will ensure an ARIA label is set implicitly by the browser.
+
+You’ll need to change your component props so that it includes the new service prop:
+export const AppointmentForm = ({
+
+  original,
+
+  selectableServices
+
+}) =>
+
+Run your tests. Although this test is now passing, you’ll find the previous tests are failing because the original prop has not been set. To fix them, first, define a new constant, blankAppointment, just above your beforeEach block. We’ll use this in each of the failing tests:
+const blankAppointment = {
+
+  service: "",
+
+};
+
+Update your previous tests so that they use this new constant as the value for the original prop. For example, the very first test for AppointmentForm will look as follows:
+it("renders a form", () => {
+
+  render(
+
+    <AppointmentForm original={blankAppointment} />
+
+  );
+
+  expect(form()).not.toBeNull();
+
+});
+
+Run the tests again with npm test; all your tests should be passing. (If they aren’t, go back and check that you’ve got an original prop value for each test.)
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/matchers/toContainText.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       74 passed, 74 total
+Snapshots:   0 total
+Time:        1.753 s
+Ran all test suites.
+```

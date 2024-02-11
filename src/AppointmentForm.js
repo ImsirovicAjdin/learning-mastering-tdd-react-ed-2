@@ -1,7 +1,7 @@
 import React from "react";
 export const AppointmentForm = ({
     selectableServices,
-    original = { service: '' }
+    original
 }) => (
     <form>
         <select

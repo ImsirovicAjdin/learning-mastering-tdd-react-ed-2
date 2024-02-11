@@ -104,6 +104,22 @@ describe("AppointmentForm", () => {
             );
             const headerRow = element("thead > tr");
             expect(headerRow.firstChild).toContainText("");
-        })
+        });
+        it("renders a week of available dates", () => {
+            const specificDate = new Date(2018, 11, 1);
+            render (
+                <AppointmentForm
+                    original={blankAppointment}
+                    today={specificDate}
+                />
+            );
+            const dates = elements(
+                "thead >* th:not(:first-child)"
+            );
+            expect(dates).toHaveLength(7);
+            expect(dates[0]).toContainText("Sat 01");
+            expect(dates[1]).toContainText("Sun 02");
+            expect(dates[6]).toContainText("Fri 07");
+        });
     });
 });

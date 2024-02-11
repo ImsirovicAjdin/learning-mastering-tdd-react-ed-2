@@ -379,3 +379,27 @@ Snapshots:   0 total
 Time:        1.723 s
 Ran all test suites.
 ```
+
+## For the rest of the header row, we’ll show the 7 days starting from today. AppointmentForm will need to take a new prop, today, which is the first day to display within the table. The value that’s assigned to that prop is stored in a variable named specificDate. This name has been chosen to highlight the fact that this chosen date affects the rendered day output, for example, "Sat 01":
+it("renders a week of available dates", () => {
+  const specificDate = new Date(2018, 11, 1);
+  render(
+    <AppointmentForm
+      original={blankAppointment}
+      today={specificDate}
+    />
+  );
+  const dates = elements(
+    "thead >* th:not(:first-child)"
+  );
+  expect(dates).toHaveLength(7);
+  expect(dates[0]).toContainText("Sat 01");
+  expect(dates[1]).toContainText("Sun 02");
+  expect(dates[6]).toContainText("Fri 07");
+});
+
+WHY PASS A DATE INTO THE COMPONENT?
+
+When you’re testing a component that deals with dates and times, you almost always want a way to control the time values that the component will see, as we have in this test. You’ll rarely want to just use the real-world time because that can cause intermittent failures in the future. For example, your test may assume that a month has at least 30 days in the year, which is only true for 11 out of 12 months. It’s better to fix the month to a specific month rather than have an unexpected failure when February comes around.
+
+For an in-depth discussion on this topic, take a look at https://reacttdd.com/controlling-time.

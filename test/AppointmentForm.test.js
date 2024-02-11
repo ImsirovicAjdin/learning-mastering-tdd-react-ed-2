@@ -98,5 +98,12 @@ describe("AppointmentForm", () => {
                 "10:30"
             );
         });
+        it("renders an empty cell at the start of the header row", () => {
+            render(
+                <AppointmentForm original={blankAppointment} />
+            );
+            const headerRow = element("thead > tr");
+            expect(headerRow.firstChild).toContainText("");
+        })
     });
 });

@@ -296,3 +296,53 @@ Snapshots:   0 total
 Time:        1.756 s
 Ran all test suites.
 ```
+
+## That’s all there is to adding the left-hand side column of headings.
+
+## Adding a header row
+Now, what about the column headings? In this section, we’ll create a new top row that contains these cells, making sure to leave an empty cell in the top-left corner, since the left column contains the time headings and not data. Follow these steps:
+
+Add the following test:
+it("renders an empty cell at the start of the header row", () =>
+  render(
+    <AppointmentForm original={blankAppointment} />
+  );
+  const headerRow = element("thead > tr");
+  expect(headerRow.firstChild).toContainText("");
+});
+
+
+**My npm test results:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ FAIL  test/AppointmentForm.test.js
+  ● AppointmentForm › time slot table › renders an empty cell at the start of the header row
+
+    TypeError: Cannot read properties of null (reading 'firstChild')
+
+      104 |             );
+      105 |             const headerRow = element("thead > tr");
+    > 106 |             expect(headerRow.firstChild).toContainText("");
+          |                              ^
+      107 |         })
+      108 |     });
+      109 | });
+
+      at Object.firstChild (test/AppointmentForm.test.js:106:30)
+
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 1 failed, 5 passed, 6 total
+Tests:       1 failed, 76 passed, 77 total
+Snapshots:   0 total
+Time:        1.813 s
+Ran all test suites.
+```

@@ -96,3 +96,24 @@ Time:        1.72 s
 Ran all test suites.
 ```
 
+## To make that pass, move to src/AppointmentForm.js and define a new TimeSlotTable component, above the definition of AppointmentForm. We don’t need to mark this one as an export as it will only be referenced by AppointmentForm:
+const TimeSlotTable = () => <table id="time-slots" />;
+
+WHY ADD AN ID?
+
+The ID is important because that’s what the application’s CSS uses to find the table element. Although it’s not covered in this book, if you’re using CSS and it defines selectors based on element IDs, then you should treat those IDs as a kind of technical specification that your code must satisfy. That’s why we write unit tests for them.
+
+Add this component to your AppointmentForm JSX, right at the bottom, just below the select tag:
+<form>
+
+  ...
+
+  <TimeSlotTable />
+
+</form>;
+
+Run the tests and verify that they are all passing.
+
+That’s all there is to the table element. Now, let’s get some data into the first column.
+
+MY TESTS PASS NOW.

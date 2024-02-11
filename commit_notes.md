@@ -5684,3 +5684,26 @@ const labelsOfAllOptions = (element) => {
 By adding a `return` statement before `Array.from`, you ensure that the function returns the array of text content from each child node of the `select` element. This should allow your test to correctly compare the received array of option labels against the expected array, fixing the test failure.
 
 ### CHATGPT PROMPT END
+
+## Green: Implement the fix
+
+**My `npm test` result after the above:**
+```
+npm test
+
+> my-mastering-tdd@1.0.0 test
+> jest
+
+ PASS  test/AppointmentForm.test.js
+ PASS  test/AppointmentsDayView.test.js
+ PASS  test/CustomerForm.test.js
+ PASS  test/matchers/toBeInputFieldOfType.test.js
+ PASS  test/matchers/toHaveClass.test.js
+ PASS  test/matchers/toContainText.test.js
+
+Test Suites: 6 passed, 6 total
+Tests:       73 passed, 73 total
+Snapshots:   0 total
+Time:        1.795 s
+Ran all test suites.
+```

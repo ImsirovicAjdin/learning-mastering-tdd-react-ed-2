@@ -14,7 +14,7 @@ describe("AppointmentForm", () => {
     });
 
     const labelsOfAllOptions = (element) => {
-        Array.from(
+        return Array.from(
             element.childNodes,
             (node) => node.textContent
         );

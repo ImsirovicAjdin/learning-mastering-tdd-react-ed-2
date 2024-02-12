@@ -16,8 +16,7 @@ div#appointmentsDayView > *:nth-child(2) {
   width: 700px;
 }
 
-menu,
-ol {
+menu, ol {
   list-style-type: none;
   padding: 0;
 }
@@ -32,9 +31,7 @@ input[type="submit"] {
   grid-column-end: 4;
 }
 
-input[type="submit"],
-button,
-[role="button"] {
+input[type="submit"], button, [role="button"] {
   background: #579;
   text-decoration: none;
   font-weight: bold;
@@ -46,7 +43,6 @@ button,
   padding: 5px 15px 5px 15px;
   margin: 5px 5px 5px 0px;
   -webkit-appearance: none;
-  appearance: none;
   border-radius: 2px;
   cursor: pointer;
 }
@@ -143,8 +139,7 @@ thead {
   background-color: #acd;
 }
 
-td,
-th {
+td, th {
   padding: 5px;
   text-align: left;
   height: 30px;
@@ -157,9 +152,11 @@ th {
   text-decoration: underline;
 }
 
+
 h3 {
   margin-left: 10px;
 }
+
 
 [role="alert"] {
   grid-column-start: 2;
@@ -181,10 +178,6 @@ h3 {
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(359deg);
-  }
+  from {transform:rotate(0deg);}
+  to {transform:rotate(359deg);}
 }

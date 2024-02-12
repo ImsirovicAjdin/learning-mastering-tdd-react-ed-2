@@ -1,18 +1,7 @@
-// const today = new Date();
-// const at = (hours) => today.setHours(hours, 0);
-// export const sampleAppointments = [
-//     { startsAt: at(9), customer: { firstName: "Charlie" } },
-//     { startsAt: at(10), customer: { firstName: "Frankie" } },
-//     { startsAt: at(11), customer: { firstName: "Casey" } },
-//     { startsAt: at(12), customer: { firstName: "Ashley" } },
-//     { startsAt: at(13), customer: { firstName: "Jordan" } },
-//     { startsAt: at(14), customer: { firstName: "Jay" } },
-//     { startsAt: at(15), customer: { firstName: "Alex" } },
-//     { startsAt: at(16), customer: { firstName: "Jules" } },
-//     { startsAt: at(17), customer: { firstName: "Stevie" } },
-// ];
-
 import { faker } from "@faker-js/faker";
+
+const randomInt = (range) =>
+  Math.floor(Math.random() * range);
 
 Array.prototype.unique = function () {
   return this.filter(function (value, index, self) {
@@ -21,17 +10,13 @@ Array.prototype.unique = function () {
 };
 
 Array.prototype.pickRandom = function () {
-  return this[
-    Math.floor(Math.random() * this.length)
-  ];
+  return this[randomInt(this.length)];
 };
 
 const today = new Date();
 const at = (hours) => today.setHours(hours, 0);
 
-const stylists = [0, 1, 2, 3, 4, 5, 6]
-  .map(() => faker.name.firstName())
-  .unique();
+const stylists = ["Ashley", "Jo", "Pat", "Sam"];
 
 const services = [
   "Cut",
@@ -66,3 +51,34 @@ export const sampleAppointments = [
   { startsAt: at(16), ...generateFakeAppointment() },
   { startsAt: at(17), ...generateFakeAppointment() },
 ];
+
+const pickMany = (items, number) =>
+  Array(number)
+    .fill(1)
+    .map(() => items.pickRandom());
+
+const buildTimeSlots = () => {
+  const today = new Date();
+  const startTime = today.setHours(9, 0, 0, 0);
+  const times = [...Array(7).keys()].map((day) => {
+    const daysToAdd = day * 24 * 60 * 60 * 1000;
+    return [...Array(20).keys()].map((halfHour) => {
+      const halfHoursToAdd =
+        halfHour * 30 * 60 * 1000;
+      return {
+        startsAt:
+          startTime + daysToAdd + halfHoursToAdd,
+        stylists: pickMany(
+          stylists,
+          randomInt(stylists.length)
+        ),
+      };
+    });
+  });
+  return [].concat(...times);
+};
+
+export const sampleAvailableTimeSlots = pickMany(
+  buildTimeSlots(),
+  50
+);

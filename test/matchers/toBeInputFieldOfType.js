@@ -1,7 +1,15 @@
-import { matcherHint, printExpected } from "jest-matcher-utils";
+import {
+  matcherHint,
+  printExpected,
+} from "jest-matcher-utils";
 
-export const toBeInputFieldOfType = (element, expectedType) => {
-  const pass = element?.tagName === "INPUT" && element.type === expectedType;
+export const toBeInputFieldOfType = (
+  element,
+  expectedType
+) => {
+  const pass =
+    element?.tagName === "INPUT" &&
+    element.type === expectedType;
 
   const sourceHint = () =>
     matcherHint(
@@ -21,9 +29,11 @@ export const toBeInputFieldOfType = (element, expectedType) => {
     return `<input type=${element.type}>`;
   };
 
-  const actualHint = () => `Actual: ${receivedText()}`;
+  const actualHint = () =>
+    `Actual: ${receivedText()}`;
 
-  const message = () => [sourceHint(), actualHint()].join("\n\n");
+  const message = () =>
+    [sourceHint(), actualHint()].join("\n\n");
 
   return { pass, message };
 };

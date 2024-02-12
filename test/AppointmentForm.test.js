@@ -127,24 +127,35 @@ describe("AppointmentForm", () => {
             expect(dates[6]).toContainText("Fri 07");
         });
         it("renders radio buttons in the correct table cell positions", () => {
-            const oneDayInMs = 24 *60 *60 *1000;
+            const oneDayInMs = 24 * 60 * 60 * 1000;
             const today = new Date();
             const tomorrow = new Date(
-                today.getTime() + oneDayInMs
+              today.getTime() + oneDayInMs
             );
             const availableTimeSlots = [
-                { startsAt: today.setHours(9, 0, 0, 0) },
-                { startsAt: today.setHours(9, 30, 0, 0) },
-                { startsAt: tomorrow.setHours(9, 30, 0, 0) },
+              { startsAt: today.setHours(9, 0, 0, 0) },
+              { startsAt: today.setHours(9, 30, 0, 0) },
+              { startsAt: tomorrow.setHours(9, 30, 0, 0) },
             ];
             render(
-                <AppointmentForm
-                    original={blankAppointment}
-                    availableTimeSlots={availableTimeSlots}
-                    today={today}
-                />
+              <AppointmentForm
+                original={blankAppointment}
+                availableTimeSlots={availableTimeSlots}
+                today={today}
+              />
             );
             expect(cellsWithRadioButtons()).toEqual([0, 7, 8]);
+        });
+        it("does not render radio buttons for unavailable time slots", () => {
+            render(
+              <AppointmentForm
+                original={blankAppointment}
+                availableTimeSlots={[]}
+              />
+            );
+            expect(
+              elements("input[type=radio]")
+            ).toHaveLength(0);
         });
     });
 });
